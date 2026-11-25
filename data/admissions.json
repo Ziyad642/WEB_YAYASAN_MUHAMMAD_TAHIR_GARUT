@@ -1,0 +1,570 @@
+[
+  {
+    "user_id": "app-user-1795624805222",
+    "unit_id": "unit-smp-001",
+    "academic_year_id": "ay-2027-2028",
+    "period_id": "period-smp-g1",
+    "unitCode": "SMP",
+    "status": "diterima",
+    "verification_notes": "Berkas pendaftaran telah diverifikasi dan dinyatakan DITERIMA.",
+    "statement_agreed": true,
+    "submitted_at": "2026-11-25T16:40:05.227Z",
+    "unit": {
+      "id": "unit-smp-001",
+      "slug": "smp",
+      "unit_code": "SMP",
+      "name": "SMP Muhammad Tahir",
+      "logo_url": "/logos/logo-smp.png"
+    },
+    "academic_year": {
+      "id": "ay-2027-2028",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "period-smp-g1",
+      "name": "Gelombang 1 Reguler"
+    },
+    "applicant": {
+      "id": "app-1795624805227",
+      "full_name": "Muhammad Farhan Gunawan",
+      "gender": "L",
+      "birth_place": "Garut",
+      "birth_date": "2014-05-12",
+      "address": "Jl. Merdeka No. 45, Garut",
+      "previous_school": "SDN 1 Garut Kota"
+    },
+    "guardian": {
+      "id": "grd-1795624805227",
+      "father_name": "Hendra Gunawan",
+      "mother_name": "Rina Marlina",
+      "guardian_name": null,
+      "phone": "089911223344",
+      "email": "hendra.gunawan@test.com",
+      "parent_address": "Jl. Merdeka No. 45, Garut"
+    },
+    "documents": [],
+    "status_logs": [
+      {
+        "id": "log-1795624805241",
+        "admission_id": "adm-1795624805230",
+        "previous_status": "menunggu_verifikasi",
+        "new_status": "diterima",
+        "notes": "Berkas pendaftaran telah diverifikasi dan dinyatakan DITERIMA.",
+        "created_at": "2026-11-25T16:40:05.241Z"
+      },
+      {
+        "id": "log-1795624805227",
+        "admission_id": "adm-1795624805227",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Formulir pendaftaran daring dikirim oleh wali murid.",
+        "created_at": "2026-11-25T16:40:05.227Z"
+      }
+    ],
+    "id": "adm-1795624805230",
+    "registration_number": "MT-SMP-2027-0003",
+    "verified_by": "Ustadz Rahmat Hidayat, S.Pd",
+    "verified_at": "2026-11-25T16:40:05.241Z"
+  },
+  {
+    "unit_id": "00000000-0000-0000-0000-000000000101",
+    "academic_year_id": "ay-2027",
+    "period_id": "period-ra-2027",
+    "unitCode": "RA",
+    "status": "diterima",
+    "verification_notes": "Berkas Lengkap",
+    "statement_agreed": true,
+    "submitted_at": "2026-11-25T14:49:56.255Z",
+    "unit": {
+      "id": "00000000-0000-0000-0000-000000000101",
+      "slug": "ra",
+      "unit_code": "RA",
+      "name": "R.A. Muhammad Tahir",
+      "logo_url": "/logos/logo-ra.png"
+    },
+    "academic_year": {
+      "id": "ay-2027",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "period-ra-2027",
+      "name": "Gelombang 1 Tahun Ajaran 2027/2028"
+    },
+    "applicant": {
+      "id": "app-1795618196255",
+      "full_name": "Ziyad Ahmad Fauzan",
+      "gender": "L",
+      "birth_place": "Garut",
+      "birth_date": "2012-05-09",
+      "address": "Kp. Babakan Kiarabuah/Ds. Sukaluyu/Kec. Sukawening/Kab. Garut/Jawa Barat",
+      "previous_school": ""
+    },
+    "guardian": {
+      "id": "grd-1795618196255",
+      "father_name": "Ziyad",
+      "mother_name": "Ahmad",
+      "guardian_name": "",
+      "phone": "082298149440",
+      "parent_address": "Kp. Babakan Kiarabuah/Ds. Sukaluyu/Kec. Sukawening/Kab. Garut/Jawa Barat"
+    },
+    "documents": [
+      {
+        "id": "doc-1795618196255-0",
+        "admission_id": "adm-1795618196255",
+        "document_key": "kk",
+        "document_label": "Kartu Keluarga (KK)",
+        "file_name": "Kisi_kisi_soal_informatika_kelas_8.pdf",
+        "file_path": "local/admissions/Kisi_kisi_soal_informatika_kelas_8.pdf",
+        "file_size_bytes": 80038,
+        "mime_type": "application/pdf",
+        "is_verified": false
+      },
+      {
+        "id": "doc-1795618196255-1",
+        "admission_id": "adm-1795618196255",
+        "document_key": "akta",
+        "document_label": "Akta Kelahiran",
+        "file_name": "Kisi_kisi_soal_informatika_kelas_8.pdf",
+        "file_path": "local/admissions/Kisi_kisi_soal_informatika_kelas_8.pdf",
+        "file_size_bytes": 80038,
+        "mime_type": "application/pdf",
+        "is_verified": false
+      },
+      {
+        "id": "doc-1795618196255-2",
+        "admission_id": "adm-1795618196255",
+        "document_key": "pas_foto",
+        "document_label": "Pas Foto 3x4",
+        "file_name": "Kisi_kisi_soal_informatika_kelas_8.pdf",
+        "file_path": "local/admissions/Kisi_kisi_soal_informatika_kelas_8.pdf",
+        "file_size_bytes": 80038,
+        "mime_type": "application/pdf",
+        "is_verified": false
+      }
+    ],
+    "status_logs": [
+      {
+        "id": "log-1795619905504",
+        "admission_id": "adm-1795618196258",
+        "previous_status": "menunggu_verifikasi",
+        "new_status": "diterima",
+        "notes": "Berkas Lengkap",
+        "created_at": "2026-11-25T15:18:25.504Z"
+      },
+      {
+        "id": "log-1795618196255",
+        "admission_id": "adm-1795618196255",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Pendaftaran formulir daring dikirim oleh wali murid (Tersimpan di Database Lokal).",
+        "created_at": "2026-11-25T14:49:56.255Z"
+      }
+    ],
+    "id": "adm-1795618196258",
+    "registration_number": "MT-RA-2027-0003",
+    "verified_by": "H. Muhammad Tahir",
+    "verified_at": "2026-11-25T15:18:25.504Z"
+  },
+  {
+    "unit_id": "00000000-0000-0000-0000-000000000101",
+    "academic_year_id": "ay-2027",
+    "period_id": "period-ra-2027",
+    "unitCode": "RA",
+    "status": "menunggu_verifikasi",
+    "verification_notes": null,
+    "statement_agreed": true,
+    "submitted_at": "2026-11-25T12:32:36.385Z",
+    "unit": {
+      "id": "00000000-0000-0000-0000-000000000101",
+      "slug": "ra",
+      "unit_code": "RA",
+      "name": "R.A. Muhammad Tahir",
+      "logo_url": "/logos/logo-ra.png"
+    },
+    "academic_year": {
+      "id": "ay-2027",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "period-ra-2027",
+      "name": "Gelombang 1 Tahun Ajaran 2027/2028"
+    },
+    "applicant": {
+      "id": "app-1795609956385",
+      "full_name": "Muhammad Rizki Pratama",
+      "gender": "L",
+      "birth_place": "Garut",
+      "birth_date": "2021-08-15",
+      "address": "Jl. Otista No. 120, Tarogong, Garut",
+      "previous_school": "PAUD Ceria"
+    },
+    "guardian": {
+      "id": "grd-1795609956385",
+      "father_name": "Budi Pratama",
+      "mother_name": "Rina Marlina",
+      "guardian_name": "",
+      "phone": "081399887766",
+      "parent_address": "Jl. Otista No. 120, Tarogong, Garut"
+    },
+    "documents": [
+      {
+        "id": "doc-1795609956385-0",
+        "admission_id": "adm-1795609956385",
+        "document_key": "kk",
+        "document_label": "Kartu Keluarga",
+        "file_name": "kk_rizki.pdf",
+        "file_path": "local/admissions/kk_rizki.pdf",
+        "file_size_bytes": 18,
+        "mime_type": "application/pdf",
+        "is_verified": false
+      }
+    ],
+    "status_logs": [
+      {
+        "id": "log-1795609956385",
+        "admission_id": "adm-1795609956385",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Pendaftaran formulir daring dikirim oleh wali murid (Tersimpan di Database Lokal).",
+        "created_at": "2026-11-25T12:32:36.385Z"
+      }
+    ],
+    "id": "adm-1795609956387",
+    "registration_number": "MT-RA-2027-0002"
+  },
+  {
+    "id": "adm-001",
+    "registration_number": "MT-RA-2027-0001",
+    "unit_id": "10000000-0000-0000-0000-000000000001",
+    "academic_year_id": "20000000-0000-0000-0000-000000000001",
+    "period_id": "30000000-0000-0000-0000-000000000001",
+    "status": "diterima",
+    "verification_notes": "Berkas lengkap dan sesuai kriteria usia.",
+    "statement_agreed": true,
+    "verified_by": "Admin R.A.",
+    "verified_at": "2026-11-24T10:30:00Z",
+    "submitted_at": "2026-11-23T08:15:00Z",
+    "unit": {
+      "id": "10000000-0000-0000-0000-000000000001",
+      "slug": "ra",
+      "unit_code": "RA",
+      "name": "R.A. Muhammad Tahir",
+      "logo_url": "/logos/logo-ra.png"
+    },
+    "academic_year": {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "30000000-0000-0000-0000-000000000001",
+      "name": "Gelombang 1"
+    },
+    "applicant": {
+      "id": "app-001",
+      "full_name": "Aisyah Azzahra",
+      "gender": "P",
+      "birth_place": "Garut",
+      "birth_date": "2021-04-12",
+      "address": "Jl. Pembangunan No. 45, Tarogong Kidul, Garut",
+      "previous_school": "PAUD Melati"
+    },
+    "guardian": {
+      "id": "grd-001",
+      "father_name": "Ahmad Fauzi",
+      "mother_name": "Siti Maryam",
+      "guardian_name": null,
+      "phone": "081234567891",
+      "parent_address": "Jl. Pembangunan No. 45, Tarogong Kidul, Garut"
+    },
+    "documents": [
+      {
+        "id": "doc-001",
+        "admission_id": "adm-001",
+        "document_key": "kk",
+        "document_label": "Kartu Keluarga (KK)",
+        "file_name": "kk_aisyah.pdf",
+        "file_path": "admissions/ra/kk_aisyah.pdf",
+        "file_size_bytes": 420000,
+        "mime_type": "application/pdf",
+        "is_verified": true
+      },
+      {
+        "id": "doc-002",
+        "admission_id": "adm-001",
+        "document_key": "akta",
+        "document_label": "Akta Kelahiran",
+        "file_name": "akta_aisyah.pdf",
+        "file_path": "admissions/ra/akta_aisyah.pdf",
+        "file_size_bytes": 380000,
+        "mime_type": "application/pdf",
+        "is_verified": true
+      }
+    ],
+    "status_logs": [
+      {
+        "id": "log-001",
+        "admission_id": "adm-001",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Pendaftaran formulir daring dikirim oleh wali murid.",
+        "created_at": "2026-11-23T08:15:00Z"
+      },
+      {
+        "id": "log-002",
+        "admission_id": "adm-001",
+        "previous_status": "menunggu_verifikasi",
+        "new_status": "diterima",
+        "notes": "Berkas lengkap dan sesuai kriteria usia.",
+        "created_at": "2026-11-24T10:30:00Z"
+      }
+    ],
+    "google_sync": {
+      "id": "sync-001",
+      "sync_status": "success",
+      "target_sheet_tab": "Pendaftar R.A.",
+      "attempt_count": 1,
+      "synced_at": "2026-11-23T08:15:05Z"
+    }
+  },
+  {
+    "id": "adm-002",
+    "registration_number": "MT-MI-2027-0001",
+    "unit_id": "10000000-0000-0000-0000-000000000002",
+    "academic_year_id": "20000000-0000-0000-0000-000000000001",
+    "period_id": "30000000-0000-0000-0000-000000000002",
+    "status": "perlu_perbaikan_dokumen",
+    "verification_notes": "Selamat, calon siswa diterima!",
+    "statement_agreed": true,
+    "verified_by": "Administrator Utama Yayasan",
+    "verified_at": "2026-11-25T14:46:07.440Z",
+    "submitted_at": "2026-11-23T09:20:00Z",
+    "unit": {
+      "id": "10000000-0000-0000-0000-000000000002",
+      "slug": "mi",
+      "unit_code": "MI",
+      "name": "MI Muhammad Tahir",
+      "logo_url": "/logos/logo-mi-placeholder.svg"
+    },
+    "academic_year": {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "30000000-0000-0000-0000-000000000002",
+      "name": "Gelombang 1"
+    },
+    "applicant": {
+      "id": "app-002",
+      "full_name": "Fathir Al-Faruq",
+      "gender": "L",
+      "birth_place": "Bandung",
+      "birth_date": "2019-08-20",
+      "address": "Kompleks Permata Garut Blok B-12",
+      "previous_school": "TK Islam Terpadu"
+    },
+    "guardian": {
+      "id": "grd-002",
+      "father_name": "Dedi Kurniawan",
+      "mother_name": "Rina Herlina",
+      "guardian_name": null,
+      "phone": "081398765432",
+      "parent_address": "Kompleks Permata Garut Blok B-12"
+    },
+    "documents": [
+      {
+        "id": "doc-004",
+        "admission_id": "adm-002",
+        "document_key": "kk",
+        "document_label": "Kartu Keluarga (KK)",
+        "file_name": "kk_fathir.pdf",
+        "file_path": "admissions/mi/kk_fathir.pdf",
+        "file_size_bytes": 450000,
+        "mime_type": "application/pdf",
+        "is_verified": true
+      }
+    ],
+    "status_logs": [
+      {
+        "id": "log-1795617967440",
+        "admission_id": "adm-002",
+        "previous_status": "diterima",
+        "new_status": "perlu_perbaikan_dokumen",
+        "notes": "Selamat, calon siswa diterima!",
+        "created_at": "2026-11-25T14:46:07.440Z"
+      },
+      {
+        "id": "log-1795610129826",
+        "admission_id": "adm-002",
+        "previous_status": "sedang_diverifikasi",
+        "new_status": "diterima",
+        "notes": "Selamat, calon siswa diterima!",
+        "created_at": "2026-11-25T12:35:29.826Z"
+      },
+      {
+        "id": "log-003",
+        "admission_id": "adm-002",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Pendaftaran formulir daring dikirim oleh wali murid.",
+        "created_at": "2026-11-23T09:20:00Z"
+      },
+      {
+        "id": "log-004",
+        "admission_id": "adm-002",
+        "previous_status": "menunggu_verifikasi",
+        "new_status": "sedang_diverifikasi",
+        "notes": "Menunggu jadwal wawancara santri & wali.",
+        "created_at": "2026-11-24T11:00:00Z"
+      }
+    ],
+    "google_sync": {
+      "id": "sync-002",
+      "sync_status": "success",
+      "target_sheet_tab": "Pendaftar MI",
+      "attempt_count": 1,
+      "synced_at": "2026-11-23T09:20:05Z"
+    }
+  },
+  {
+    "id": "adm-003",
+    "registration_number": "MT-SMP-2027-0001",
+    "unit_id": "10000000-0000-0000-0000-000000000003",
+    "academic_year_id": "20000000-0000-0000-0000-000000000001",
+    "period_id": "30000000-0000-0000-0000-000000000003",
+    "status": "diterima",
+    "verification_notes": "",
+    "statement_agreed": true,
+    "verified_by": "Drs. H. Ahmad Sanusi, M.Pd",
+    "verified_at": "2026-11-25T15:19:09.376Z",
+    "submitted_at": "2026-11-24T14:10:00Z",
+    "unit": {
+      "id": "10000000-0000-0000-0000-000000000003",
+      "slug": "smp",
+      "unit_code": "SMP",
+      "name": "SMP Muhammad Tahir",
+      "logo_url": "/logos/logo-smp.png"
+    },
+    "academic_year": {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "30000000-0000-0000-0000-000000000003",
+      "name": "Gelombang 1"
+    },
+    "applicant": {
+      "id": "app-003",
+      "full_name": "Muhammad Bilal Al-Ghifari",
+      "gender": "L",
+      "birth_place": "Garut",
+      "birth_date": "2014-02-18",
+      "address": "Jl. Raya Samarang No. 88, Tarogong Kaler",
+      "previous_school": "SDN 1 Tarogong"
+    },
+    "guardian": {
+      "id": "grd-003",
+      "father_name": "Hendra Gunawan",
+      "mother_name": "Nurul Hidayati",
+      "guardian_name": null,
+      "phone": "082155667788",
+      "parent_address": "Jl. Raya Samarang No. 88, Tarogong Kaler"
+    },
+    "documents": [],
+    "status_logs": [
+      {
+        "id": "log-1795619949376",
+        "admission_id": "adm-003",
+        "previous_status": "menunggu_verifikasi",
+        "new_status": "diterima",
+        "notes": "Status diperbarui menjadi diterima",
+        "created_at": "2026-11-25T15:19:09.376Z"
+      },
+      {
+        "id": "log-005",
+        "admission_id": "adm-003",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Pendaftaran formulir daring dikirim oleh wali murid.",
+        "created_at": "2026-11-24T14:10:00Z"
+      }
+    ],
+    "google_sync": {
+      "id": "sync-003",
+      "sync_status": "success",
+      "target_sheet_tab": "Pendaftar SMP",
+      "attempt_count": 1,
+      "synced_at": "2026-11-24T14:10:06Z"
+    }
+  },
+  {
+    "id": "adm-004",
+    "registration_number": "MT-SMP-2027-0002",
+    "unit_id": "10000000-0000-0000-0000-000000000003",
+    "academic_year_id": "20000000-0000-0000-0000-000000000001",
+    "period_id": "30000000-0000-0000-0000-000000000003",
+    "status": "perlu_perbaikan_dokumen",
+    "verification_notes": "Foto Kartu Keluarga buram, mohon unggah ulang scan KK yang jelas.",
+    "statement_agreed": true,
+    "verified_by": "Admin SMP",
+    "verified_at": "2026-11-24T15:00:00Z",
+    "submitted_at": "2026-11-24T12:00:00Z",
+    "unit": {
+      "id": "10000000-0000-0000-0000-000000000003",
+      "slug": "smp",
+      "unit_code": "SMP",
+      "name": "SMP Muhammad Tahir",
+      "logo_url": "/logos/logo-smp.png"
+    },
+    "academic_year": {
+      "id": "20000000-0000-0000-0000-000000000001",
+      "name": "2027/2028"
+    },
+    "period": {
+      "id": "30000000-0000-0000-0000-000000000003",
+      "name": "Gelombang 1"
+    },
+    "applicant": {
+      "id": "app-004",
+      "full_name": "Salma Nabila Putri",
+      "gender": "P",
+      "birth_place": "Garut",
+      "birth_date": "2014-06-05",
+      "address": "Kp. Bojong No. 22, Karangpawitan, Garut",
+      "previous_school": "MI Muhammad Tahir"
+    },
+    "guardian": {
+      "id": "grd-004",
+      "father_name": "Bambang Supriyanto",
+      "mother_name": "Dewi Sartika",
+      "guardian_name": null,
+      "phone": "085211223344",
+      "parent_address": "Kp. Bojong No. 22, Karangpawitan, Garut"
+    },
+    "documents": [],
+    "status_logs": [
+      {
+        "id": "log-006",
+        "admission_id": "adm-004",
+        "previous_status": null,
+        "new_status": "menunggu_verifikasi",
+        "notes": "Pendaftaran formulir daring dikirim oleh wali murid.",
+        "created_at": "2026-11-24T12:00:00Z"
+      },
+      {
+        "id": "log-007",
+        "admission_id": "adm-004",
+        "previous_status": "menunggu_verifikasi",
+        "new_status": "perlu_perbaikan_dokumen",
+        "notes": "Foto Kartu Keluarga buram, mohon unggah ulang scan KK yang jelas.",
+        "created_at": "2026-11-24T15:00:00Z"
+      }
+    ],
+    "google_sync": {
+      "id": "sync-004",
+      "sync_status": "success",
+      "target_sheet_tab": "Pendaftar SMP",
+      "attempt_count": 1,
+      "synced_at": "2026-11-24T12:00:06Z"
+    }
+  }
+]

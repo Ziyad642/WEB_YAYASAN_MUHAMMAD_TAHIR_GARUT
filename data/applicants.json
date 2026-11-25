@@ -1,0 +1,34 @@
+[
+  {
+    "id": "app-user-001",
+    "full_name": "Ahmad Fauzi",
+    "phone": "081234567891",
+    "email": "ahmad.fauzi@gmail.com",
+    "password": "WaliSantri2027!",
+    "created_at": "2026-11-23T08:00:00Z"
+  },
+  {
+    "id": "app-user-002",
+    "full_name": "Dadan Hamdani",
+    "phone": "081234567892",
+    "email": "dadan.hamdani@gmail.com",
+    "password": "WaliSantri2027!",
+    "created_at": "2026-11-23T11:00:00Z"
+  },
+  {
+    "id": "app-user-1795620219793",
+    "full_name": "Ibu Siti Khodijah",
+    "phone": "081988177400",
+    "email": "siti.1795620218749@gmail.com",
+    "password": "Khodijah2027!",
+    "created_at": "2026-11-25T15:23:39.793Z"
+  },
+  {
+    "id": "app-user-1795624805222",
+    "full_name": "Bapak Hendra Gunawan",
+    "phone": "089911223344",
+    "email": "hendra.gunawan@test.com",
+    "password": "PasswordWali2027!",
+    "created_at": "2026-11-25T16:40:05.222Z"
+  }
+]

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Placeholder Logo MI Muhammad Tahir">
+  <defs>
+    <linearGradient id="miNavy" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#102F55" />
+      <stop offset="100%" stop-color="#082747" />
+    </linearGradient>
+    <linearGradient id="miGold" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F7DF96" />
+      <stop offset="100%" stop-color="#E9BC58" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="104" height="104" rx="26" fill="url(#miNavy)" stroke="url(#miGold)" stroke-width="3.5" />
+  <rect x="16" y="16" width="88" height="88" rx="20" stroke="#E9BC58" stroke-opacity="0.3" stroke-width="1.2" stroke-dasharray="4 4" />
+  <path d="M60 32C50 32 41 35 34 40V75C41 70 50 67 60 67C70 67 79 70 86 75V40C79 35 70 32 60 32Z" stroke="url(#miGold)" stroke-width="3" stroke-linejoin="round" />
+  <path d="M60 33V67" stroke="url(#miGold)" stroke-width="2.5" />
+  <text x="60" y="92" text-anchor="middle" fill="#E9BC58" font-family="system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="1.5">MI</text>
+</svg>

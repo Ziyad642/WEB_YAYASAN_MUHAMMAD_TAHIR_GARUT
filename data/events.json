@@ -1,0 +1,22 @@
+[
+  {
+    "id": "evt-1",
+    "title": "Pembukaan Pendaftaran PPDB Gelombang 1 Tahun Ajaran 2027/2028",
+    "description": "Penerimaan pendaftaran online untuk jenjang R.A., MI, dan SMP Muhammad Tahir Garut.",
+    "location": "Online & Sekretariat PPDB Yayasan Muhammad Tahir Garut",
+    "start_date": "2026-12-01T08:00:00.000Z",
+    "end_date": "2027-03-31T16:00:00.000Z",
+    "unit_id": null,
+    "is_published": true
+  },
+  {
+    "id": "evt-2",
+    "title": "Open House & Silaturahmi Orang Tua Calon Peserta Didik",
+    "description": "Pengenalan kurikulum, program unggulan unit R.A., MI, dan SMP bersama pimpinan yayasan.",
+    "location": "Aula Yayasan Muhammad Tahir Garut",
+    "start_date": "2027-01-16T08:30:00.000Z",
+    "end_date": "2027-01-16T12:00:00.000Z",
+    "unit_id": null,
+    "is_published": true
+  }
+]

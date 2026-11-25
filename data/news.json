@@ -1,0 +1,65 @@
+[
+  {
+    "id": "news-1",
+    "slug": "pembukaan-ppdb-online-yayasan-muhammad-tahir-garut-2027-2028",
+    "title": "Pembukaan PPDB Online Yayasan Muhammad Tahir Garut Tahun Ajaran 2027/2028",
+    "excerpt": "Pendaftaran Peserta Didik Baru (PPDB) untuk jenjang R.A., MI, dan SMP kini dapat dilakukan secara online melalui satu sistem terpadu.",
+    "content": "Yayasan Muhammad Tahir Garut resmi membuka Penerimaan Peserta Didik Baru (PPDB) Tahun Ajaran 2027/2028 untuk unit R.A., MI, dan SMP. Orang tua/wali dapat memilih jenjang pendidikan, mengisi formulir secara bertahap, mengunggah dokumen persyaratan, serta memantau status verifikasi pendaftaran secara daring melalui halaman Cek Pendaftaran.",
+    "thumbnail_url": "/images/campus-building.jpg",
+    "category_id": "cat-2",
+    "unit_id": null,
+    "status": "published",
+    "is_featured": true,
+    "published_at": "2026-11-23T08:00:00.000Z",
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "updated_at": "2026-11-25T08:00:00.000Z",
+    "category": {
+      "id": "cat-2",
+      "slug": "pengumuman",
+      "name": "Pengumuman"
+    },
+    "unit": null
+  },
+  {
+    "id": "news-2",
+    "slug": "semarak-hari-guru-nasional-di-lingkungan-yayasan",
+    "title": "Semarak Hari Guru Nasional di Lingkungan Yayasan Muhammad Tahir Garut",
+    "excerpt": "Seluruh unit pendidikan melaksanakan kegiatan apresiasi dan doa bersama sebagai wujud penghormatan kepada para pendidik.",
+    "content": "Dalam rangka memperingati Hari Guru Nasional, keluarga besar Yayasan Muhammad Tahir Garut menyelenggarakan kegiatan kebersamaan yang melibatkan seluruh pendidik dan peserta didik dari unit R.A., MI, hingga SMP. Artikel ini merupakan contoh konten CMS yang dapat disunting melalui Dashboard Admin.",
+    "thumbnail_url": "/images/hero-students.jpg",
+    "category_id": "cat-1",
+    "unit_id": null,
+    "status": "published",
+    "is_featured": false,
+    "published_at": "2026-11-20T08:00:00.000Z",
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "updated_at": "2026-11-25T08:00:00.000Z",
+    "category": {
+      "id": "cat-1",
+      "slug": "kegiatan-yayasan",
+      "name": "Kegiatan Yayasan"
+    },
+    "unit": null
+  },
+  {
+    "id": "news-3",
+    "slug": "sinergi-program-pembinaan-karakter-islami-antar-unit",
+    "title": "Sinergi Program Pembinaan Karakter Islami di Seluruh Unit Pendidikan",
+    "excerpt": "Koordinasi kurikulum pembiasaan ibadah dan adab Islami yang berkelanjutan dari jenjang R.A., MI, hingga SMP.",
+    "content": "Pengurus Yayasan bersama kepala unit R.A., MI, dan SMP menyusun kesinambungan program pembinaan karakter Islami agar peserta didik memiliki landasan akhlak yang kuat di setiap tahapan pendidikan. Artikel ini dapat diperbarui melalui Dashboard Admin.",
+    "thumbnail_url": "/images/campus-building.jpg",
+    "category_id": "cat-1",
+    "unit_id": null,
+    "status": "published",
+    "is_featured": false,
+    "published_at": "2026-11-15T08:00:00.000Z",
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "updated_at": "2026-11-25T08:00:00.000Z",
+    "category": {
+      "id": "cat-1",
+      "slug": "kegiatan-yayasan",
+      "name": "Kegiatan Yayasan"
+    },
+    "unit": null
+  }
+]

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "gal-1",
+    "slug": "lingkungan-kampus-yayasan",
+    "title": "Lingkungan Kampus Yayasan Muhammad Tahir Garut",
+    "description": "Dokumentasi suasana gedung sekolah dan halaman belajar peserta didik (Placeholder).",
+    "cover_image_url": "/images/campus-building.jpg",
+    "unit_id": null,
+    "is_published": true,
+    "event_date": "2026-11-20",
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "items": [
+      {
+        "id": "gal-item-1",
+        "gallery_id": "gal-1",
+        "media_type": "photo",
+        "media_url": "/images/campus-building.jpg",
+        "caption": "Gedung utama pembelajaran Yayasan Muhammad Tahir Garut",
+        "display_order": 1
+      },
+      {
+        "id": "gal-item-2",
+        "gallery_id": "gal-1",
+        "media_type": "photo",
+        "media_url": "/images/hero-students.jpg",
+        "caption": "Aktivitas siswa di lingkungan sekolah",
+        "display_order": 2
+      }
+    ]
+  }
+]

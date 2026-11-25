@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tch-ra-1",
+    "unit_id": "00000000-0000-0000-0000-000000000101",
+    "full_name": "Pengajar R.A. (Contoh - Ubah di Admin)",
+    "position": "Kepala Unit R.A.",
+    "subject_or_specialty": "Pendidikan Anak Usia Dini",
+    "education_background": "S1 PG-PAUD",
+    "display_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "tch-mi-1",
+    "unit_id": "00000000-0000-0000-0000-000000000102",
+    "full_name": "Pengajar MI (Contoh - Ubah di Admin)",
+    "position": "Kepala Madrasah Ibtidaiyah",
+    "subject_or_specialty": "PGMI & Tahfidz",
+    "education_background": "S1 Pendidikan Islam",
+    "display_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "tch-smp-1",
+    "unit_id": "00000000-0000-0000-0000-000000000103",
+    "full_name": "Pengajar SMP (Contoh - Ubah di Admin)",
+    "position": "Kepala SMP",
+    "subject_or_specialty": "Manajemen Pendidikan",
+    "education_background": "S1 Pendidikan",
+    "display_order": 1,
+    "is_active": true
+  }
+]

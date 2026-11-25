@@ -1,0 +1,173 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000101",
+    "slug": "ra",
+    "unit_code": "RA",
+    "name": "R.A. Muhammad Tahir",
+    "level_label": "Pendidikan Anak Usia Dini",
+    "short_description": "Pendidikan Islam anak usia dini yang ceria, ramah anak, dan menanamkan adab sejak dini.",
+    "full_profile": "R.A. Muhammad Tahir (Raudhatul Athfal) di bawah naungan Yayasan Muhammad Tahir Garut menyelenggarakan pendidikan anak usia dini berbasis nilai-nilai keislaman, bermain sambil belajar, serta pengenalan Al-Qur'an sejak dini.",
+    "history": "Profil sejarah unit R.A. dapat diperbarui oleh Admin Unit R.A. melalui Dashboard Admin.",
+    "vision": "Membentuk anak usia dini yang ceria, sehat, mandiri, mencintai Allah dan Rasul-Nya, serta siap memasuki jenjang pendidikan dasar.",
+    "mission": [
+      "Menanamkan pembiasaan ibadah dan adab Islami sehari-hari.",
+      "Mengembangkan motorik, kognitif, bahasa, dan kreativitas anak melalui metode bermain bermakna.",
+      "Menciptakan lingkungan belajar yang aman, nyaman, dan penuh kasih sayang."
+    ],
+    "achievements": [
+      "Lingkungan belajar ramah anak dengan sentra bermain edukatif.",
+      "Program pembiasaan doa harian dan hafalan surat pendek."
+    ],
+    "ppdb_info": "Menerima peserta didik baru usia 4–6 tahun (Kelompok A dan Kelompok B). Persyaratan dokumen dapat disesuaikan oleh Admin Unit R.A.",
+    "required_documents": [
+      {
+        "key": "kk",
+        "label": "Kartu Keluarga (KK)",
+        "required": true,
+        "description": "Scan/foto Kartu Keluarga yang masih berlaku"
+      },
+      {
+        "key": "akta",
+        "label": "Akta Kelahiran",
+        "required": true,
+        "description": "Scan/foto Akta Kelahiran calon peserta didik"
+      },
+      {
+        "key": "pas_foto",
+        "label": "Pas Foto 3x4",
+        "required": true,
+        "description": "Pas foto berwarna terbaru"
+      }
+    ],
+    "logo_url": "/logos/logo-ra.png",
+    "is_logo_placeholder": false,
+    "banner_image_url": "/images/campus-building.jpg",
+    "accent_color": "#D4A742",
+    "headmaster_name": "Kepala R.A. (Dapat diubah Admin)",
+    "contact_phone": "(0262) 000000",
+    "contact_email": "ra@yayasanmuhammadtahirgarut.sch.id",
+    "address": "Kompleks Pendidikan Yayasan Muhammad Tahir Garut",
+    "display_order": 1,
+    "is_active": true,
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "updated_at": "2026-11-25T08:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000102",
+    "slug": "mi",
+    "unit_code": "MI",
+    "name": "MI Muhammad Tahir",
+    "level_label": "Pendidikan Tingkat Dasar",
+    "short_description": "Madrasah Ibtidaiyah yang memadukan kurikulum nasional, literasi sains, dan tahfidz Al-Qur'an.",
+    "full_profile": "MI Muhammad Tahir merupakan jenjang pendidikan dasar setingkat Sekolah Dasar yang mengintegrasikan kurikulum pendidikan nasional, Kementerian Agama, penguatan tahfidz, serta pembentukan akhlak mulia.",
+    "history": "Profil sejarah unit MI dapat diperbarui oleh Admin Unit MI melalui Dashboard Admin.",
+    "vision": "Menjadi Madrasah Ibtidaiyah unggul yang melahirkan generasi cerdas intelektual, kuat spiritual, dan berkarakter Islami.",
+    "mission": [
+      "Menyelenggarakan pembelajaran aktif dan menyenangkan berbasis literasi dan numerasi.",
+      "Membina hafalan Al-Qur'an dan pembiasaan shalat berjamaah.",
+      "Mengembangkan minat dan bakat siswa melalui kegiatan ekstrakurikuler terpadu."
+    ],
+    "achievements": [
+      "Pembinaan program tahfidz Al-Qur'an terstruktur.",
+      "Integrasi pembelajaran berbasis karakter dan teknologi."
+    ],
+    "ppdb_info": "Menerima peserta didik baru lulusan TK/RA atau sederajat usia minimal 6 tahun. Logo resmi MI sementara menggunakan placeholder hingga file logo asli diunggah via Admin.",
+    "required_documents": [
+      {
+        "key": "kk",
+        "label": "Kartu Keluarga (KK)",
+        "required": true,
+        "description": "Scan/foto Kartu Keluarga yang masih berlaku"
+      },
+      {
+        "key": "akta",
+        "label": "Akta Kelahiran",
+        "required": true,
+        "description": "Scan/foto Akta Kelahiran calon peserta didik"
+      },
+      {
+        "key": "pas_foto",
+        "label": "Pas Foto 3x4",
+        "required": true,
+        "description": "Pas foto berwarna terbaru"
+      },
+      {
+        "key": "ijazah_tk",
+        "label": "Surat Keterangan / Ijazah RA/TK",
+        "required": false,
+        "description": "Opsional jika sudah tersedia"
+      }
+    ],
+    "logo_url": "/logos/logo-mi-placeholder.svg",
+    "is_logo_placeholder": true,
+    "banner_image_url": "/images/campus-building.jpg",
+    "accent_color": "#102F55",
+    "headmaster_name": "Kepala MI (Dapat diubah Admin)",
+    "contact_phone": "(0262) 000000",
+    "contact_email": "mi@yayasanmuhammadtahirgarut.sch.id",
+    "address": "Kompleks Pendidikan Yayasan Muhammad Tahir Garut",
+    "display_order": 2,
+    "is_active": true,
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "updated_at": "2026-11-25T08:00:00.000Z"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000103",
+    "slug": "smp",
+    "unit_code": "SMP",
+    "name": "SMP Muhammad Tahir",
+    "level_label": "Pendidikan Tingkat Menengah Pertama",
+    "short_description": "Sekolah Menengah Pertama berbasis karakter Islami, kepemimpinan, dan prestasi akademik.",
+    "full_profile": "SMP Muhammad Tahir membekali remaja dengan fondasi akidah yang kokoh, penguasaan sains dan teknologi, kemampuan berbahasa, serta jiwa kepemimpinan untuk siap melanjutkan ke jenjang terbaik.",
+    "history": "Profil sejarah unit SMP dapat diperbarui oleh Admin Unit SMP melalui Dashboard Admin.",
+    "vision": "Mewujudkan lulusan SMP yang berakhlak mulia, berprestasi akademik dan non-akademik, serta siap menghadapi tantangan zaman.",
+    "mission": [
+      "Menerapkan pembelajaran kolaboratif berbasis proyek dan penguatan karakter Islami.",
+      "Membekali siswa dengan kecakapan digital, literasi, dan kepemimpinan organisasi.",
+      "Mendorong prestasi kompetisi akademik, keagamaan, dan olahraga."
+    ],
+    "achievements": [
+      "Pembinaan OSIS dan organisasi kepemimpinan pelajar.",
+      "Program penguatan akademik dan pembinaan keagamaan intensif."
+    ],
+    "ppdb_info": "Menerima peserta didik baru lulusan SD/MI sederajat. Persyaratan dan kuota gelombang dapat diatur oleh Admin Unit SMP.",
+    "required_documents": [
+      {
+        "key": "kk",
+        "label": "Kartu Keluarga (KK)",
+        "required": true,
+        "description": "Scan/foto Kartu Keluarga yang masih berlaku"
+      },
+      {
+        "key": "akta",
+        "label": "Akta Kelahiran",
+        "required": true,
+        "description": "Scan/foto Akta Kelahiran calon peserta didik"
+      },
+      {
+        "key": "pas_foto",
+        "label": "Pas Foto 3x4",
+        "required": true,
+        "description": "Pas foto berwarna terbaru"
+      },
+      {
+        "key": "skl_sd",
+        "label": "SKL / Rapor Terakhir SD/MI",
+        "required": true,
+        "description": "Surat Keterangan Lulus atau fotokopi rapor semester terakhir"
+      }
+    ],
+    "logo_url": "/logos/logo-smp.png",
+    "is_logo_placeholder": false,
+    "banner_image_url": "/images/campus-building.jpg",
+    "accent_color": "#0F5C43",
+    "headmaster_name": "Kepala SMP (Dapat diubah Admin)",
+    "contact_phone": "(0262) 000000",
+    "contact_email": "smp@yayasanmuhammadtahirgarut.sch.id",
+    "address": "Kompleks Pendidikan Yayasan Muhammad Tahir Garut",
+    "display_order": 3,
+    "is_active": true,
+    "created_at": "2026-11-25T08:00:00.000Z",
+    "updated_at": "2026-11-25T08:00:00.000Z"
+  }
+]
