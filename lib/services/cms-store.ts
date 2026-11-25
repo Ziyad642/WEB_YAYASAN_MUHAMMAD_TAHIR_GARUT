@@ -1,6 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import {
+  DEFAULT_ADMISSION_PERIODS,
   DEFAULT_EDUCATION_UNITS,
   DEFAULT_EVENTS,
   DEFAULT_FOUNDATION_SETTINGS,
@@ -8,7 +7,9 @@ import {
   DEFAULT_NEWS,
   DEFAULT_TEACHERS,
 } from '@/lib/data/default-content';
+import { readDataJson, writeDataJson } from '@/lib/storage/data-storage';
 import type {
+  AdmissionPeriod,
   EducationUnit,
   FoundationSettings,
   GalleryAlbum,
@@ -17,60 +18,36 @@ import type {
   Teacher,
 } from '@/types/database';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const SETTINGS_FILE = path.join(DATA_DIR, 'foundation-settings.json');
-const UNITS_FILE = path.join(DATA_DIR, 'units.json');
-const NEWS_FILE = path.join(DATA_DIR, 'news.json');
-const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
-const GALLERIES_FILE = path.join(DATA_DIR, 'galleries.json');
-const TEACHERS_FILE = path.join(DATA_DIR, 'teachers.json');
-
-function ensureDir(): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
+const SETTINGS_FILE = 'foundation-settings.json';
+const UNITS_FILE = 'units.json';
+const NEWS_FILE = 'news.json';
+const EVENTS_FILE = 'events.json';
+const GALLERIES_FILE = 'galleries.json';
+const TEACHERS_FILE = 'teachers.json';
+const PERIODS_FILE = 'admission-periods.json';
 
 // ============================================================================
 // 1. FOUNDATION SETTINGS PERSISTENCE
 // ============================================================================
 export function getStoredFoundationSettings(): FoundationSettings {
-  try {
-    ensureDir();
-    if (!fs.existsSync(SETTINGS_FILE)) {
-      fs.writeFileSync(
-        SETTINGS_FILE,
-        JSON.stringify(DEFAULT_FOUNDATION_SETTINGS, null, 2),
-        'utf8'
-      );
-      return DEFAULT_FOUNDATION_SETTINGS;
-    }
-    const content = fs.readFileSync(SETTINGS_FILE, 'utf8');
-    const parsed = JSON.parse(content);
-    return {
-      ...DEFAULT_FOUNDATION_SETTINGS,
-      ...parsed,
-      mission: Array.isArray(parsed.mission)
-        ? parsed.mission
-        : DEFAULT_FOUNDATION_SETTINGS.mission,
-    };
-  } catch (err) {
-    console.error('Error reading foundation settings:', err);
-    return DEFAULT_FOUNDATION_SETTINGS;
-  }
+  const data = readDataJson<FoundationSettings>(SETTINGS_FILE, DEFAULT_FOUNDATION_SETTINGS);
+  return {
+    ...DEFAULT_FOUNDATION_SETTINGS,
+    ...data,
+    mission: Array.isArray(data.mission) ? data.mission : DEFAULT_FOUNDATION_SETTINGS.mission,
+  };
 }
 
 export function updateStoredFoundationSettings(
   patch: Partial<FoundationSettings>
 ): FoundationSettings {
-  ensureDir();
   const current = getStoredFoundationSettings();
   const updated: FoundationSettings = {
     ...current,
     ...patch,
     updated_at: new Date().toISOString(),
   };
-  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(updated, null, 2), 'utf8');
+  writeDataJson(SETTINGS_FILE, updated);
   return updated;
 }
 
@@ -78,26 +55,18 @@ export function updateStoredFoundationSettings(
 // 2. EDUCATION UNITS PERSISTENCE
 // ============================================================================
 export function getStoredEducationUnits(): EducationUnit[] {
-  try {
-    ensureDir();
-    if (!fs.existsSync(UNITS_FILE)) {
-      fs.writeFileSync(UNITS_FILE, JSON.stringify(DEFAULT_EDUCATION_UNITS, null, 2), 'utf8');
-      return DEFAULT_EDUCATION_UNITS;
-    }
-    const content = fs.readFileSync(UNITS_FILE, 'utf8');
-    return JSON.parse(content) as EducationUnit[];
-  } catch {
-    return DEFAULT_EDUCATION_UNITS;
-  }
+  return readDataJson<EducationUnit[]>(UNITS_FILE, DEFAULT_EDUCATION_UNITS);
 }
 
 export function updateStoredEducationUnit(
   unitId: string,
   patch: Partial<EducationUnit>
 ): EducationUnit | null {
-  ensureDir();
   const units = getStoredEducationUnits();
-  const index = units.findIndex((u) => u.id === unitId);
+  // Cocokkan berdasarkan ID, slug, atau unit_code untuk fleksibilitas maksimal
+  const index = units.findIndex(
+    (u) => u.id === unitId || u.slug === unitId || u.unit_code.toLowerCase() === unitId.toLowerCase()
+  );
   if (index === -1) return null;
 
   units[index] = {
@@ -105,7 +74,7 @@ export function updateStoredEducationUnit(
     ...patch,
     updated_at: new Date().toISOString(),
   };
-  fs.writeFileSync(UNITS_FILE, JSON.stringify(units, null, 2), 'utf8');
+  writeDataJson(UNITS_FILE, units);
   return units[index];
 }
 
@@ -113,86 +82,69 @@ export function updateStoredEducationUnit(
 // 3. NEWS PERSISTENCE
 // ============================================================================
 export function getStoredNews(): NewsArticle[] {
-  try {
-    ensureDir();
-    if (!fs.existsSync(NEWS_FILE)) {
-      fs.writeFileSync(NEWS_FILE, JSON.stringify(DEFAULT_NEWS, null, 2), 'utf8');
-      return DEFAULT_NEWS;
-    }
-    const content = fs.readFileSync(NEWS_FILE, 'utf8');
-    return JSON.parse(content) as NewsArticle[];
-  } catch {
-    return DEFAULT_NEWS;
-  }
+  return readDataJson<NewsArticle[]>(NEWS_FILE, DEFAULT_NEWS);
 }
 
 export function saveStoredNews(news: NewsArticle[]): void {
-  ensureDir();
-  fs.writeFileSync(NEWS_FILE, JSON.stringify(news, null, 2), 'utf8');
+  writeDataJson(NEWS_FILE, news);
 }
 
 // ============================================================================
 // 4. EVENTS PERSISTENCE
 // ============================================================================
 export function getStoredEvents(): SchoolEvent[] {
-  try {
-    ensureDir();
-    if (!fs.existsSync(EVENTS_FILE)) {
-      fs.writeFileSync(EVENTS_FILE, JSON.stringify(DEFAULT_EVENTS, null, 2), 'utf8');
-      return DEFAULT_EVENTS;
-    }
-    const content = fs.readFileSync(EVENTS_FILE, 'utf8');
-    return JSON.parse(content) as SchoolEvent[];
-  } catch {
-    return DEFAULT_EVENTS;
-  }
+  return readDataJson<SchoolEvent[]>(EVENTS_FILE, DEFAULT_EVENTS);
 }
 
 export function saveStoredEvents(events: SchoolEvent[]): void {
-  ensureDir();
-  fs.writeFileSync(EVENTS_FILE, JSON.stringify(events, null, 2), 'utf8');
+  writeDataJson(EVENTS_FILE, events);
 }
 
 // ============================================================================
 // 5. GALLERIES PERSISTENCE
 // ============================================================================
 export function getStoredGalleries(): GalleryAlbum[] {
-  try {
-    ensureDir();
-    if (!fs.existsSync(GALLERIES_FILE)) {
-      fs.writeFileSync(GALLERIES_FILE, JSON.stringify(DEFAULT_GALLERIES, null, 2), 'utf8');
-      return DEFAULT_GALLERIES;
-    }
-    const content = fs.readFileSync(GALLERIES_FILE, 'utf8');
-    return JSON.parse(content) as GalleryAlbum[];
-  } catch {
-    return DEFAULT_GALLERIES;
-  }
+  return readDataJson<GalleryAlbum[]>(GALLERIES_FILE, DEFAULT_GALLERIES);
 }
 
 export function saveStoredGalleries(galleries: GalleryAlbum[]): void {
-  ensureDir();
-  fs.writeFileSync(GALLERIES_FILE, JSON.stringify(galleries, null, 2), 'utf8');
+  writeDataJson(GALLERIES_FILE, galleries);
 }
 
 // ============================================================================
 // 6. TEACHERS PERSISTENCE
 // ============================================================================
 export function getStoredTeachers(): Teacher[] {
-  try {
-    ensureDir();
-    if (!fs.existsSync(TEACHERS_FILE)) {
-      fs.writeFileSync(TEACHERS_FILE, JSON.stringify(DEFAULT_TEACHERS, null, 2), 'utf8');
-      return DEFAULT_TEACHERS;
-    }
-    const content = fs.readFileSync(TEACHERS_FILE, 'utf8');
-    return JSON.parse(content) as Teacher[];
-  } catch {
-    return DEFAULT_TEACHERS;
-  }
+  return readDataJson<Teacher[]>(TEACHERS_FILE, DEFAULT_TEACHERS);
 }
 
 export function saveStoredTeachers(teachers: Teacher[]): void {
-  ensureDir();
-  fs.writeFileSync(TEACHERS_FILE, JSON.stringify(teachers, null, 2), 'utf8');
+  writeDataJson(TEACHERS_FILE, teachers);
+}
+
+// ============================================================================
+// 7. ADMISSION PERIODS (GELOMBANG PPDB) PERSISTENCE
+// ============================================================================
+export function getStoredAdmissionPeriods(): AdmissionPeriod[] {
+  return readDataJson<AdmissionPeriod[]>(PERIODS_FILE, DEFAULT_ADMISSION_PERIODS);
+}
+
+export function updateStoredAdmissionPeriod(
+  periodId: string,
+  patch: Partial<AdmissionPeriod>
+): AdmissionPeriod | null {
+  const periods = getStoredAdmissionPeriods();
+  const index = periods.findIndex((p) => p.id === periodId);
+  if (index === -1) return null;
+
+  periods[index] = {
+    ...periods[index],
+    ...patch,
+  };
+  writeDataJson(PERIODS_FILE, periods);
+  return periods[index];
+}
+
+export function saveStoredAdmissionPeriods(periods: AdmissionPeriod[]): void {
+  writeDataJson(PERIODS_FILE, periods);
 }

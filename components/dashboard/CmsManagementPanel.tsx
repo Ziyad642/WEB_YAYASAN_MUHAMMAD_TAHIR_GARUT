@@ -1,8 +1,8 @@
 'use client';
 
-import { Loader2, Plus, Save, Trash2, Upload } from 'lucide-react';
+import { Loader2, Plus, Save, Trash2, Upload, UserCheck, UserX } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AdminDashboardPayload } from '@/lib/data/admin-repository';
 import { formatDateId } from '@/lib/utils';
 import type { AuthSessionProfile, RequiredDocumentConfig } from '@/types/database';
@@ -137,6 +137,52 @@ export function CmsManagementPanel({
     'admin_unit'
   );
   const [userUnitIds, setUserUnitIds] = useState<string[]>([]);
+
+  const [localPeriods, setLocalPeriods] = useState(data.admissionPeriods);
+  const [localUsers, setLocalUsers] = useState(data.users);
+
+  useEffect(() => {
+    setLocalPeriods(data.admissionPeriods);
+  }, [data.admissionPeriods]);
+
+  useEffect(() => {
+    setLocalUsers(data.users);
+  }, [data.users]);
+
+  useEffect(() => {
+    if (activeUnit) {
+      setUnitDraft({
+        name: activeUnit.name,
+        level_label: activeUnit.level_label,
+        short_description: activeUnit.short_description,
+        full_profile: activeUnit.full_profile,
+        history: activeUnit.history,
+        vision: activeUnit.vision,
+        missionText: activeUnit.mission.join('\n'),
+        achievementsText: activeUnit.achievements.join('\n'),
+        ppdb_info: activeUnit.ppdb_info,
+        logo_url: activeUnit.logo_url,
+        is_logo_placeholder: activeUnit.is_logo_placeholder,
+        banner_image_url: activeUnit.banner_image_url,
+        accent_color: activeUnit.accent_color,
+        headmaster_name: activeUnit.headmaster_name ?? '',
+        contact_phone: activeUnit.contact_phone ?? '',
+        contact_email: activeUnit.contact_email ?? '',
+        required_documents: activeUnit.required_documents,
+      });
+    }
+  }, [activeUnit?.id]);
+
+  useEffect(() => {
+    if (data.units.length > 0 && profile.role !== 'super_admin') {
+      const defaultId = data.units[0].id;
+      if (!newsUnitId) setNewsUnitId(defaultId);
+      if (!galUnitId) setGalUnitId(defaultId);
+      if (!evtUnitId) setEvtUnitId(defaultId);
+      if (!tchUnitId) setTchUnitId(defaultId);
+      if (!periodUnitId) setPeriodUnitId(defaultId);
+    }
+  }, [data.units, profile.role]);
 
   const callCmsApi = async (
     resource: string,
@@ -361,7 +407,19 @@ export function CmsManagementPanel({
   // =========================================================================
   // 2. PROFIL UNIT PENDIDIKAN, UPLOAD LOGO RESMI & SYARAT PPDB UNIT
   // =========================================================================
-  if (section === 'units' && activeUnit && unitDraft) {
+  if (section === 'units') {
+    if (!activeUnit || !unitDraft) {
+      return (
+        <div className="rounded-2xl border border-navy/10 bg-white p-8 text-center">
+          <p className="text-sm font-bold text-navy-deep">
+            {data.units.length === 0
+              ? 'Belum ada unit pendidikan yang ditugaskan untuk akun Anda.'
+              : 'Memuat data profil unit pendidikan...'}
+          </p>
+        </div>
+      );
+    }
+
     const selectUnit = (id: string) => {
       setSelectedUnitId(id);
       const u = data.units.find((item) => item.id === id);
@@ -409,22 +467,24 @@ export function CmsManagementPanel({
 
     return (
       <div className="space-y-5">
-        <div className="flex flex-wrap gap-2">
-          {data.units.map((u) => (
-            <button
-              key={u.id}
-              type="button"
-              onClick={() => selectUnit(u.id)}
-              className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
-                u.id === activeUnit.id
-                  ? 'bg-navy text-white'
-                  : 'bg-white text-navy ring-1 ring-navy/15 hover:bg-navy-soft'
-              }`}
-            >
-              {u.name}
-            </button>
-          ))}
-        </div>
+        {data.units.length > 1 && (
+          <div className="flex flex-wrap gap-2">
+            {data.units.map((u) => (
+              <button
+                key={u.id}
+                type="button"
+                onClick={() => selectUnit(u.id)}
+                className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
+                  u.id === activeUnit.id
+                    ? 'bg-navy text-white'
+                    : 'bg-white text-navy ring-1 ring-navy/15 hover:bg-navy-soft'
+                }`}
+              >
+                {u.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="rounded-2xl border border-navy/10 bg-white p-5 sm:p-6">
           <StatusBanner />
@@ -1188,7 +1248,7 @@ export function CmsManagementPanel({
         </div>
 
         <div className="divide-y divide-navy/10 rounded-2xl border border-navy/10 bg-white">
-          {data.admissionPeriods.map((p) => {
+          {localPeriods.map((p) => {
             const unitName = data.units.find((u) => u.id === p.unit_id)?.name ?? '-';
             return (
               <div key={p.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
@@ -1202,18 +1262,25 @@ export function CmsManagementPanel({
                 </div>
                 <button
                   type="button"
-                  onClick={() =>
-                    callCmsApi(
+                  disabled={saving}
+                  onClick={async () => {
+                    const nextIsOpen = !p.is_open;
+                    setLocalPeriods((prev) =>
+                      prev.map((item) =>
+                        item.id === p.id ? { ...item, is_open: nextIsOpen } : item
+                      )
+                    );
+                    await callCmsApi(
                       'admission_periods',
                       'update',
-                      { is_open: !p.is_open, quota: p.quota },
+                      { is_open: nextIsOpen, quota: p.quota },
                       p.id
-                    )
-                  }
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold ${
+                    );
+                  }}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
                     p.is_open
-                      ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
-                      : 'bg-slate-100 text-slate-600'
+                      ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 hover:bg-emerald-100'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
                   {p.is_open ? 'Dibuka (Klik untuk Tutup)' : 'Ditutup (Klik untuk Buka)'}
@@ -1336,49 +1403,133 @@ export function CmsManagementPanel({
         </div>
 
         <div className="divide-y divide-navy/10 rounded-2xl border border-navy/10 bg-white">
-          {data.users.map((u) => (
-            <div key={u.id} className="flex flex-wrap items-center justify-between gap-2 p-4">
-              <div>
-                <p className="text-sm font-bold text-navy-deep">{u.full_name}</p>
-                <p className="text-xs text-slate-500">{u.email}</p>
+          {localUsers.map((u) => {
+            const isProtected =
+              u.email.toLowerCase() === 'admin@yayasanmuhammadtahirgarut.sch.id';
+            return (
+              <div
+                key={u.id}
+                className="flex flex-wrap items-center justify-between gap-3 p-4 sm:flex-nowrap"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-navy-deep">{u.full_name}</p>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                        u.is_active
+                          ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                          : 'bg-rose-50 text-rose-700 ring-1 ring-rose-200'
+                      }`}
+                    >
+                      {u.is_active ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">{u.email}</p>
+                  {u.unit_names.length > 0 && (
+                    <p className="mt-0.5 text-[11px] font-semibold text-gold-dark">
+                      Unit: {u.unit_names.join(', ')}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 sm:ml-auto">
+                  <span className="rounded-full bg-navy-soft px-3 py-1 text-xs font-bold text-navy">
+                    {u.role_name}
+                  </span>
+
+                  {!isProtected && (
+                    <>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={async () => {
+                          const nextActive = !u.is_active;
+                          setLocalUsers((prev) =>
+                            prev.map((item) =>
+                              item.id === u.id ? { ...item, is_active: nextActive } : item
+                            )
+                          );
+                          await callCmsApi(
+                            'users',
+                            'update',
+                            { is_active: nextActive },
+                            u.id
+                          );
+                        }}
+                        title={u.is_active ? 'Nonaktifkan Akun' : 'Aktifkan Akun'}
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
+                          u.is_active
+                            ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                        }`}
+                      >
+                        {u.is_active ? (
+                          <>
+                            <UserX className="h-3 w-3" />
+                            <span>Nonaktifkan</span>
+                          </>
+                        ) : (
+                          <>
+                            <UserCheck className="h-3 w-3" />
+                            <span>Aktifkan</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={async () => {
+                          const confirmed = window.confirm(
+                            `Apakah Anda yakin ingin menghapus akun pengelola "${u.full_name}"?`
+                          );
+                          if (!confirmed) return;
+                          setLocalUsers((prev) => prev.filter((item) => item.id !== u.id));
+                          await callCmsApi('users', 'delete', undefined, u.id);
+                        }}
+                        title="Hapus Akun"
+                        className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        <span>Hapus</span>
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="text-right">
-                <span className="rounded-full bg-navy-soft px-3 py-1 text-xs font-bold text-navy">
-                  {u.role_name}
-                </span>
-                {u.unit_names.length > 0 && (
-                  <p className="mt-1 text-[11px] text-slate-500">{u.unit_names.join(', ')}</p>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
   }
 
   // =========================================================================
-  // 9. AUDIT LOGS (SUPER ADMIN)
+  // 9. AUDIT LOGS (KHUSUS SUPER ADMIN JIKA MEMILIH TAB AUDIT)
   // =========================================================================
-  return (
-    <div className="divide-y divide-navy/10 rounded-2xl border border-navy/10 bg-white">
-      {data.auditLogs.length === 0 ? (
-        <div className="p-8 text-center text-sm text-slate-500">
-          Belum ada catatan aktivitas admin.
-        </div>
-      ) : (
-        data.auditLogs.map((log) => (
-          <div key={log.id} className="flex flex-wrap items-center justify-between gap-2 p-4 text-xs">
-            <div>
-              <p className="font-bold text-navy-deep">{log.action}</p>
-              <p className="text-slate-500">
-                {log.actor_email} • {log.entity_type}
-              </p>
-            </div>
-            <span className="text-slate-400">{formatDateId(log.created_at, { hour: '2-digit', minute: '2-digit' })}</span>
+  if (section === 'audit' && profile.role === 'super_admin') {
+    return (
+      <div className="divide-y divide-navy/10 rounded-2xl border border-navy/10 bg-white">
+        {data.auditLogs.length === 0 ? (
+          <div className="p-8 text-center text-sm text-slate-500">
+            Belum ada catatan aktivitas admin.
           </div>
-        ))
-      )}
-    </div>
-  );
+        ) : (
+          data.auditLogs.map((log) => (
+            <div key={log.id} className="flex flex-wrap items-center justify-between gap-2 p-4 text-xs">
+              <div>
+                <p className="font-bold text-navy-deep">{log.action}</p>
+                <p className="text-slate-500">
+                  {log.actor_email} • {log.entity_type}
+                </p>
+              </div>
+              <span className="text-slate-400">{formatDateId(log.created_at, { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+          ))
+        )}
+      </div>
+    );
+  }
+
+  return null;
 }

@@ -1,13 +1,11 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { readDataJson, writeDataJson } from '@/lib/storage/data-storage';
 import type {
   AdmissionRecord,
   AdmissionStatus,
   UnitCode,
 } from '@/types/database';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const ADMISSIONS_FILE = path.join(DATA_DIR, 'admissions.json');
+const ADMISSIONS_FILE = 'admissions.json';
 
 const INITIAL_SEED_ADMISSIONS: AdmissionRecord[] = [
   {
@@ -299,32 +297,20 @@ const INITIAL_SEED_ADMISSIONS: AdmissionRecord[] = [
   },
 ];
 
-function ensureDataFile(): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(ADMISSIONS_FILE)) {
-    fs.writeFileSync(ADMISSIONS_FILE, JSON.stringify(INITIAL_SEED_ADMISSIONS, null, 2), 'utf8');
-  }
-}
-
 export function getLocalAdmissions(): AdmissionRecord[] {
-  try {
-    ensureDataFile();
-    const content = fs.readFileSync(ADMISSIONS_FILE, 'utf8');
-    return JSON.parse(content) as AdmissionRecord[];
-  } catch {
-    return INITIAL_SEED_ADMISSIONS;
-  }
+  return readDataJson<AdmissionRecord[]>(ADMISSIONS_FILE, INITIAL_SEED_ADMISSIONS);
 }
 
 export function saveLocalAdmissions(admissions: AdmissionRecord[]): void {
-  try {
-    ensureDataFile();
-    fs.writeFileSync(ADMISSIONS_FILE, JSON.stringify(admissions, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Failed to save local admissions:', err);
-  }
+  writeDataJson(ADMISSIONS_FILE, admissions);
+}
+
+export function deleteLocalAdmission(id: string): boolean {
+  const all = getLocalAdmissions();
+  const next = all.filter((a) => a.id !== id);
+  if (next.length === all.length) return false;
+  saveLocalAdmissions(next);
+  return true;
 }
 
 export function createLocalAdmission(

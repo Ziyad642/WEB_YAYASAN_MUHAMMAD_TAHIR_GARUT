@@ -1,4 +1,5 @@
 import { getAllowedUnitIds } from '@/lib/auth/session';
+import { getStoredAdminUsers } from '@/lib/auth/admin-users';
 import {
   DEFAULT_ACADEMIC_YEARS,
   DEFAULT_ADMISSION_PERIODS,
@@ -11,6 +12,7 @@ import {
   DEFAULT_TEACHERS,
 } from '@/lib/data/default-content';
 import {
+  getStoredAdmissionPeriods,
   getStoredEducationUnits,
   getStoredEvents,
   getStoredFoundationSettings,
@@ -210,19 +212,42 @@ export async function getAdminDashboardData(
     const filteredUnits =
       allowedUnits === 'ALL'
         ? storedUnits
-        : storedUnits.filter((u) => allowedUnits.includes(u.id));
+        : storedUnits.filter(
+            (u) =>
+              allowedUnits.includes(u.id) ||
+              allowedUnits.includes(u.slug) ||
+              allowedUnits.includes(u.unit_code)
+          );
 
     const localAdmissions = getLocalAdmissions();
     const filteredAdmissions =
       allowedUnits === 'ALL'
         ? localAdmissions
-        : localAdmissions.filter((a) => allowedUnits.includes(a.unit_id));
+        : localAdmissions.filter((a) => {
+            const u = storedUnits.find((unit) => unit.id === a.unit_id);
+            return (
+              allowedUnits.includes(a.unit_id) ||
+              (u && (allowedUnits.includes(u.slug) || allowedUnits.includes(u.unit_code)))
+            );
+          });
 
     const storedFoundation = getStoredFoundationSettings();
     const storedNews = getStoredNews();
     const storedGalleries = getStoredGalleries();
     const storedEvents = getStoredEvents();
     const storedTeachers = getStoredTeachers();
+    const storedPeriods = getStoredAdmissionPeriods();
+    const storedUsers = getStoredAdminUsers();
+
+    const normalizedUsers = storedUsers.map((u) => ({
+      id: u.id,
+      full_name: u.full_name,
+      email: u.email,
+      is_active: u.is_active,
+      role_code: u.role,
+      role_name: u.role_name,
+      unit_names: u.unit_access.map((ua) => ua.unit_name),
+    }));
 
     return {
       foundation: profile.role === 'super_admin' ? storedFoundation : null,
@@ -234,9 +259,9 @@ export async function getAdminDashboardData(
       events: storedEvents,
       teachers: storedTeachers,
       academicYears: DEFAULT_ACADEMIC_YEARS,
-      admissionPeriods: DEFAULT_ADMISSION_PERIODS,
+      admissionPeriods: storedPeriods,
       syncLogs: MOCK_SYNC_LOGS,
-      users: profile.role === 'super_admin' ? MOCK_USERS : [],
+      users: profile.role === 'super_admin' ? normalizedUsers : [],
       auditLogs: profile.role === 'super_admin' ? MOCK_AUDIT_LOGS : [],
     };
   }

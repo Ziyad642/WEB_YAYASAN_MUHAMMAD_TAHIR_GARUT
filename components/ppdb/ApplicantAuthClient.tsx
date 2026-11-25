@@ -219,9 +219,23 @@ export function ApplicantAuthClient() {
           )}
 
           {error && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-800">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>{error}</span>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-800">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+                <span>{error}</span>
+              </div>
+              {error.includes('Buat Akun') && activeTab === 'login' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('register');
+                    setError('');
+                  }}
+                  className="shrink-0 rounded-full bg-rose-600 px-3 py-1 text-[11px] font-bold text-white hover:bg-rose-700"
+                >
+                  Daftar Akun Baru
+                </button>
+              )}
             </div>
           )}
 

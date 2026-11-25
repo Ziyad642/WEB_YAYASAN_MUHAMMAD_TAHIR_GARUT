@@ -71,12 +71,16 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
         items.push({ key: 'foundation', label: 'Profil Yayasan', icon: Building2 });
       }
       items.push(
-        { key: 'units', label: 'Unit & Logo', icon: School },
-        { key: 'news', label: 'Berita', icon: Newspaper },
-        { key: 'galleries', label: 'Galeri', icon: ImageIcon },
-        { key: 'events', label: 'Agenda', icon: Calendar },
+        {
+          key: 'units',
+          label: isSuperAdmin ? 'Profil Unit Sekolah' : 'Profil Sekolah & Logo',
+          icon: School,
+        },
+        { key: 'news', label: 'Berita & Pengumuman', icon: Newspaper },
+        { key: 'galleries', label: 'Galeri Foto', icon: ImageIcon },
+        { key: 'events', label: 'Agenda Kegiatan', icon: Calendar },
         { key: 'teachers', label: 'Tenaga Pendidik', icon: UserCheck },
-        { key: 'periods', label: 'Periode PPDB', icon: Settings }
+        { key: 'periods', label: 'Gelombang PPDB', icon: Settings }
       );
     }
 

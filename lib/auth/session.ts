@@ -106,24 +106,47 @@ export async function getServerAuthProfile(overrideRole?: string): Promise<AuthS
 
 export function canAccessUnit(profile: AuthSessionProfile, unitId: string): boolean {
   if (profile.role === 'super_admin') return true;
-  return profile.unit_access.some((ua) => ua.unit_id === unitId);
+  return profile.unit_access.some(
+    (ua) =>
+      ua.unit_id === unitId ||
+      ua.unit_slug === unitId ||
+      ua.unit_code.toLowerCase() === unitId.toLowerCase()
+  );
 }
 
 export function canManageUnitContent(profile: AuthSessionProfile, unitId: string | null): boolean {
   if (profile.role === 'super_admin') return true;
   if (!unitId || profile.role !== 'admin_unit') return false;
-  return profile.unit_access.some((ua) => ua.unit_id === unitId && ua.can_manage_content);
+  return profile.unit_access.some(
+    (ua) =>
+      (ua.unit_id === unitId ||
+        ua.unit_slug === unitId ||
+        ua.unit_code.toLowerCase() === unitId.toLowerCase()) &&
+      ua.can_manage_content
+  );
 }
 
 export function canVerifyUnitPpdb(profile: AuthSessionProfile, unitId: string): boolean {
   if (profile.role === 'super_admin') return true;
   if (profile.role !== 'admin_unit' && profile.role !== 'panitia_ppdb') return false;
-  return profile.unit_access.some((ua) => ua.unit_id === unitId && ua.can_verify_ppdb);
+  return profile.unit_access.some(
+    (ua) =>
+      (ua.unit_id === unitId ||
+        ua.unit_slug === unitId ||
+        ua.unit_code.toLowerCase() === unitId.toLowerCase()) &&
+      ua.can_verify_ppdb
+  );
 }
 
 export function getAllowedUnitIds(profile: AuthSessionProfile): string[] | 'ALL' {
   if (profile.role === 'super_admin') return 'ALL';
-  return profile.unit_access.map((ua) => ua.unit_id);
+  const set = new Set<string>();
+  for (const ua of profile.unit_access) {
+    if (ua.unit_id) set.add(ua.unit_id);
+    if (ua.unit_slug) set.add(ua.unit_slug);
+    if (ua.unit_code) set.add(ua.unit_code);
+  }
+  return Array.from(set);
 }
 
 export async function logAuditActivity(params: {

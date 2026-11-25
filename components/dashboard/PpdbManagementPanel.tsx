@@ -9,6 +9,7 @@ import {
   Loader2,
   RefreshCw,
   Search,
+  Trash2,
   X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -47,6 +48,33 @@ export function PpdbManagementPanel({
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [batchSyncing, setBatchSyncing] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteAdmission = async (id: string, regNo: string) => {
+    const confirmDelete = window.confirm(
+      `Apakah Anda yakin ingin menghapus data pendaftar "${regNo}"? Data yang dihapus tidak dapat dipulihkan.`
+    );
+    if (!confirmDelete) return;
+
+    setDeletingId(id);
+    setFeedback('');
+    try {
+      const res = await fetch(`/api/admin/admissions/${id}`, {
+        method: 'DELETE',
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Gagal menghapus pendaftar.');
+      setFeedback('Data pendaftar berhasil dihapus permanen.');
+      if (selected?.id === id) {
+        setSelected(null);
+      }
+      onRefresh();
+    } catch (err) {
+      setFeedback(err instanceof Error ? err.message : 'Gagal menghapus pendaftar.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filteredAdmissions = useMemo(() => {
     return admissions.filter((a) => {
@@ -353,14 +381,31 @@ export function PpdbManagementPanel({
                     <p className="text-xs text-slate-500">
                       {adm.unit?.name} • {adm.guardian?.phone}
                     </p>
-                    <button
-                      type="button"
-                      onClick={() => openModal(adm)}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-navy-soft px-3.5 py-1.5 text-xs font-bold text-navy"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      <span>Periksa & Verifikasi</span>
-                    </button>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => openModal(adm)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-navy-soft px-3.5 py-1.5 text-xs font-bold text-navy"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        <span>Periksa & Verifikasi</span>
+                      </button>
+                      {canVerify && (
+                        <button
+                          type="button"
+                          disabled={deletingId === adm.id}
+                          onClick={() => handleDeleteAdmission(adm.id, adm.registration_number)}
+                          className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                        >
+                          {deletingId === adm.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-3.5 w-3.5" />
+                          )}
+                          <span>Hapus</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -416,14 +461,31 @@ export function PpdbManagementPanel({
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => openModal(adm)}
-                            className="inline-flex items-center gap-1.5 rounded-full bg-navy px-3.5 py-1.5 text-xs font-bold text-white hover:bg-navy-deep"
-                          >
-                            <Eye className="h-3.5 w-3.5" />
-                            <span>Detail</span>
-                          </button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => openModal(adm)}
+                              className="inline-flex items-center gap-1.5 rounded-full bg-navy px-3.5 py-1.5 text-xs font-bold text-white hover:bg-navy-deep"
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                              <span>Detail</span>
+                            </button>
+                            {canVerify && (
+                              <button
+                                type="button"
+                                title="Hapus Data Pendaftar"
+                                disabled={deletingId === adm.id}
+                                onClick={() => handleDeleteAdmission(adm.id, adm.registration_number)}
+                                className="inline-flex items-center rounded-full bg-rose-50 p-2 text-rose-600 hover:bg-rose-100 disabled:opacity-50"
+                              >
+                                {deletingId === adm.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                )}
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -563,11 +625,26 @@ export function PpdbManagementPanel({
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  {canVerify && (
+                    <button
+                      type="button"
+                      disabled={deletingId === selected.id}
+                      onClick={() => handleDeleteAdmission(selected.id, selected.registration_number)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100 disabled:opacity-50"
+                    >
+                      {deletingId === selected.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
+                      <span>Hapus Pendaftar Ini</span>
+                    </button>
+                  )}
                   <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-2.5 text-sm font-extrabold text-navy-deep hover:bg-gold-light disabled:opacity-60"
+                    className="ml-auto inline-flex items-center gap-2 rounded-full bg-gold px-6 py-2.5 text-sm font-extrabold text-navy-deep hover:bg-gold-light disabled:opacity-60"
                   >
                     {saving ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

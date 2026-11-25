@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyApplicantCredentials } from '@/lib/auth/applicant-store';
+import { findApplicantUser, verifyApplicantCredentials } from '@/lib/auth/applicant-store';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,10 +15,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const accountExists = findApplicantUser(identifier);
+    if (!accountExists) {
+      return NextResponse.json(
+        {
+          error:
+            'Nomor WhatsApp/Email belum terdaftar. Silakan klik tab "Buat Akun" di atas terlebih dahulu.',
+        },
+        { status: 404 }
+      );
+    }
+
     const applicant = verifyApplicantCredentials(identifier, password);
     if (!applicant) {
       return NextResponse.json(
-        { error: 'Nomor WhatsApp/Email atau kata sandi tidak cocok.' },
+        { error: 'Kata sandi tidak cocok. Silakan periksa kembali atau klik "Lupa sandi?".' },
         { status: 401 }
       );
     }

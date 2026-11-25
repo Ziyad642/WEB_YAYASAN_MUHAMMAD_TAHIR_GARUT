@@ -1,7 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { cookies } from 'next/headers';
 import { getLocalAdmissions } from '@/lib/services/local-store';
+import { readDataJson, writeDataJson } from '@/lib/storage/data-storage';
 import type { AdmissionRecord } from '@/types/database';
 
 export interface ApplicantAccount {
@@ -13,8 +12,7 @@ export interface ApplicantAccount {
   created_at: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const APPLICANTS_FILE = path.join(DATA_DIR, 'applicants.json');
+const APPLICANTS_FILE = 'applicants.json';
 
 const INITIAL_APPLICANTS: ApplicantAccount[] = [
   {
@@ -35,32 +33,12 @@ const INITIAL_APPLICANTS: ApplicantAccount[] = [
   },
 ];
 
-function ensureApplicantsFile(): void {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(APPLICANTS_FILE)) {
-    fs.writeFileSync(APPLICANTS_FILE, JSON.stringify(INITIAL_APPLICANTS, null, 2), 'utf8');
-  }
-}
-
 export function getApplicants(): ApplicantAccount[] {
-  try {
-    ensureApplicantsFile();
-    const content = fs.readFileSync(APPLICANTS_FILE, 'utf8');
-    return JSON.parse(content) as ApplicantAccount[];
-  } catch {
-    return INITIAL_APPLICANTS;
-  }
+  return readDataJson<ApplicantAccount[]>(APPLICANTS_FILE, INITIAL_APPLICANTS);
 }
 
 export function saveApplicants(applicants: ApplicantAccount[]): void {
-  try {
-    ensureApplicantsFile();
-    fs.writeFileSync(APPLICANTS_FILE, JSON.stringify(applicants, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Failed to save applicants:', err);
-  }
+  writeDataJson(APPLICANTS_FILE, applicants);
 }
 
 export function createApplicantAccount(data: {
@@ -105,20 +83,25 @@ export function createApplicantAccount(data: {
   return { success: true, account: newAccount };
 }
 
-export function verifyApplicantCredentials(
-  identifier: string,
-  password: string
-): ApplicantAccount | null {
+export function findApplicantUser(identifier: string): ApplicantAccount | null {
   const applicants = getApplicants();
   const clean = identifier.trim().toLowerCase();
   const cleanPhone = clean.replace(/[^0-9]/g, '');
 
-  const user = applicants.find((a) => {
-    const matchPhone = cleanPhone.length >= 9 && a.phone.replace(/[^0-9]/g, '') === cleanPhone;
-    const matchEmail = a.email && a.email.toLowerCase() === clean;
-    return matchPhone || matchEmail;
-  });
+  return (
+    applicants.find((a) => {
+      const matchPhone = cleanPhone.length >= 9 && a.phone.replace(/[^0-9]/g, '') === cleanPhone;
+      const matchEmail = a.email && a.email.toLowerCase() === clean;
+      return matchPhone || matchEmail;
+    }) || null
+  );
+}
 
+export function verifyApplicantCredentials(
+  identifier: string,
+  password: string
+): ApplicantAccount | null {
+  const user = findApplicantUser(identifier);
   if (!user) return null;
   if (user.password !== password.trim()) return null;
 

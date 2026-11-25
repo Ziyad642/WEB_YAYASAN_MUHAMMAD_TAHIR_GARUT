@@ -1,23 +1,33 @@
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  createStoredAdminUser,
+  deleteStoredAdminUser,
+  getStoredAdminUsers,
+  updateStoredAdminUser,
+} from '@/lib/auth/admin-users';
 import { canManageUnitContent, getServerAuthProfile, logAuditActivity } from '@/lib/auth/session';
 import { getClientIp } from '@/lib/security/rate-limit';
 import {
+  getStoredAdmissionPeriods,
   getStoredEducationUnits,
   getStoredEvents,
   getStoredFoundationSettings,
   getStoredGalleries,
   getStoredNews,
   getStoredTeachers,
+  saveStoredAdmissionPeriods,
   saveStoredEvents,
   saveStoredGalleries,
   saveStoredNews,
   saveStoredTeachers,
+  updateStoredAdmissionPeriod,
   updateStoredEducationUnit,
   updateStoredFoundationSettings,
 } from '@/lib/services/cms-store';
 import { createAdminSupabaseClient, isSupabaseAdminConfigured } from '@/lib/supabase/server';
 import { slugify } from '@/lib/utils';
+import type { UnitCode } from '@/types/database';
 import {
   educationUnitUpdateSchema,
   eventSchema,
@@ -230,6 +240,138 @@ export async function POST(request: NextRequest) {
           revalidatePath('/');
           revalidatePath('/admin/dashboard');
           return NextResponse.json({ success: true, id: newItem.id });
+        }
+      }
+
+      // 7. Gelombang PPDB (Admission Periods)
+      if (resource === 'admission_periods') {
+        if (action === 'update' && id && payload) {
+          const updated = updateStoredAdmissionPeriod(id, {
+            ...(payload.is_open !== undefined ? { is_open: Boolean(payload.is_open) } : {}),
+            ...(payload.quota !== undefined ? { quota: Number(payload.quota) } : {}),
+            ...(payload.start_date !== undefined ? { start_date: String(payload.start_date) } : {}),
+            ...(payload.end_date !== undefined ? { end_date: String(payload.end_date) } : {}),
+            ...(payload.name !== undefined ? { name: String(payload.name) } : {}),
+          });
+          revalidatePath('/');
+          revalidatePath('/ppdb');
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({
+            success: true,
+            data: updated,
+            message: 'Status gelombang PPDB berhasil diperbarui.',
+          });
+        }
+        if (action === 'create' && payload) {
+          const periods = getStoredAdmissionPeriods();
+          const newPeriod = {
+            id: `prd-${Date.now()}`,
+            academic_year_id: String(payload.academic_year_id || 'ay-2027'),
+            unit_id: String(payload.unit_id),
+            name: String(payload.name),
+            start_date: String(payload.start_date),
+            end_date: String(payload.end_date),
+            quota: Number(payload.quota || 60),
+            is_open: Boolean(payload.is_open ?? true),
+            notes: String(payload.notes ?? ''),
+          };
+          saveStoredAdmissionPeriods([...periods, newPeriod]);
+          revalidatePath('/');
+          revalidatePath('/ppdb');
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({
+            success: true,
+            id: newPeriod.id,
+            message: 'Gelombang PPDB baru berhasil dibuka.',
+          });
+        }
+      }
+
+      // 8. Pengguna Admin (Kepala Sekolah & Super Admin)
+      if (resource === 'users') {
+        if (profile.role !== 'super_admin') {
+          return NextResponse.json({ error: 'Khusus Super Admin Yayasan.' }, { status: 403 });
+        }
+        if (action === 'delete' && id) {
+          const ok = deleteStoredAdminUser(id);
+          if (!ok) {
+            return NextResponse.json(
+              { error: 'Akun tidak dapat dihapus (Akun Ketua Yayasan dilindungi).' },
+              { status: 400 }
+            );
+          }
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({ success: true, message: 'Akun pengelola berhasil dihapus.' });
+        }
+        if (action === 'update' && id && payload) {
+          const updated = updateStoredAdminUser(id, payload);
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({
+            success: true,
+            data: updated,
+            message: 'Data akun berhasil diperbarui.',
+          });
+        }
+        if (action === 'create' && payload) {
+          const email = String(payload.email || '').trim().toLowerCase();
+          const password = String(payload.password || '').trim();
+          const fullName = String(payload.full_name || '').trim();
+          const roleCode = String(payload.role_code || 'admin_unit') as
+            | 'super_admin'
+            | 'admin_unit'
+            | 'panitia_ppdb';
+          const unitIds = Array.isArray(payload.unit_ids) ? (payload.unit_ids as string[]) : [];
+
+          if (!email || password.length < 8 || !fullName) {
+            return NextResponse.json(
+              { error: 'Nama, email, dan kata sandi (minimal 8 karakter) wajib diisi.' },
+              { status: 400 }
+            );
+          }
+
+          const allUnits = getStoredEducationUnits();
+          const assignedUnits = allUnits.filter((u) => unitIds.includes(u.id));
+          const unitNames = assignedUnits.map((u) => u.name).join(', ');
+
+          const rawUsername = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+          const username = rawUsername || `admin${Date.now().toString().slice(-4)}`;
+
+          const newUser = createStoredAdminUser({
+            username,
+            email,
+            password,
+            full_name: fullName,
+            title:
+              roleCode === 'super_admin'
+                ? 'Pengurus Yayasan Pusat'
+                : roleCode === 'panitia_ppdb'
+                  ? 'Panitia PPDB Terpadu'
+                  : `Kepala Sekolah ${unitNames}`,
+            phone: String(payload.phone || '081234567890'),
+            role: roleCode,
+            role_name:
+              roleCode === 'super_admin'
+                ? 'Super Admin Yayasan'
+                : roleCode === 'panitia_ppdb'
+                  ? 'Panitia PPDB'
+                  : `Kepala Sekolah ${assignedUnits.map((u) => u.slug.toUpperCase()).join('/')}`,
+            is_active: true,
+            unit_access: assignedUnits.map((u) => ({
+              unit_id: u.id,
+              unit_code: u.slug.toUpperCase() as UnitCode,
+              unit_slug: u.slug,
+              unit_name: u.name,
+              can_manage_content: roleCode === 'admin_unit',
+              can_verify_ppdb: true,
+            })),
+          });
+
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({
+            success: true,
+            id: newUser.id,
+            message: `Akun ${newUser.full_name} berhasil dibuat.`,
+          });
         }
       }
 
@@ -529,6 +671,22 @@ export async function POST(request: NextRequest) {
       if (profile.role !== 'super_admin') {
         return NextResponse.json({ error: 'Khusus Super Admin Yayasan.' }, { status: 403 });
       }
+      if (action === 'delete' && id) {
+        deleteStoredAdminUser(id);
+        try {
+          await admin.from('profiles').delete().eq('id', id);
+        } catch {}
+        revalidatePath('/admin/dashboard');
+        return NextResponse.json({ success: true, message: 'Akun pengelola berhasil dihapus.' });
+      }
+      if (action === 'update' && id && payload) {
+        updateStoredAdminUser(id, payload);
+        try {
+          await admin.from('profiles').update(payload).eq('id', id);
+        } catch {}
+        revalidatePath('/admin/dashboard');
+        return NextResponse.json({ success: true, message: 'Data akun berhasil diperbarui.' });
+      }
       if (action === 'create' && payload) {
         const email = String(payload.email).trim().toLowerCase();
         const password = String(payload.password);
@@ -573,6 +731,29 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        // Also persist locally
+        const allUnits = getStoredEducationUnits();
+        const assignedUnits = allUnits.filter((u) => unitIds.includes(u.id));
+        createStoredAdminUser({
+          username: email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || `admin${Date.now().toString().slice(-4)}`,
+          email,
+          password,
+          full_name: fullName,
+          title: roleCode === 'super_admin' ? 'Pengurus Yayasan Pusat' : `Kepala Sekolah ${assignedUnits.map((u) => u.name).join(', ')}`,
+          phone: String(payload.phone || '081234567890'),
+          role: roleCode as any,
+          role_name: roleCode === 'super_admin' ? 'Super Admin Yayasan' : roleCode === 'panitia_ppdb' ? 'Panitia PPDB' : 'Kepala Sekolah',
+          is_active: true,
+          unit_access: assignedUnits.map((u) => ({
+            unit_id: u.id,
+            unit_code: u.slug.toUpperCase() as UnitCode,
+            unit_slug: u.slug,
+            unit_name: u.name,
+            can_manage_content: roleCode === 'admin_unit',
+            can_verify_ppdb: true,
+          })),
+        });
+
         await logAuditActivity({
           actorId: profile.id,
           actorEmail: profile.email,
@@ -583,6 +764,7 @@ export async function POST(request: NextRequest) {
           ipAddress: ip,
         });
 
+        revalidatePath('/admin/dashboard');
         return NextResponse.json({ success: true, id: createdUser.user.id });
       }
     }

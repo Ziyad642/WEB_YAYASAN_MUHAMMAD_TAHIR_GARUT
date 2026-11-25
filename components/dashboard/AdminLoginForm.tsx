@@ -16,7 +16,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { OFFICIAL_ADMIN_ACCOUNTS } from '@/lib/auth/admin-users';
+import { OFFICIAL_ADMIN_ACCOUNTS } from '@/lib/auth/admin-account-constants';
 
 export function AdminLoginForm({ initialError }: { initialError?: string }) {
   const router = useRouter();
