@@ -33,7 +33,7 @@ interface UnitDetailViewProps {
   unit: EducationUnit;
   programs: UnitProgram[];
   facilities: UnitFacility[];
-  teachers: Teacher[];
+  teachers?: Teacher[];
   news: NewsArticle[];
   galleries: GalleryAlbum[];
   events: SchoolEvent[];
@@ -335,40 +335,42 @@ export function UnitDetailView({
           </div>
         </FadeInUp>
 
-        {/* Tenaga Pendidik */}
-        <FadeInUp>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-gold-dark">SDM Pendidik</p>
-            <h2 className="mt-1 text-2xl font-extrabold text-navy-deep">Tenaga Pendidik</h2>
-          </div>
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {teachers.map((teacher) => (
-              <div
-                key={teacher.id}
-                className="rounded-2xl border border-navy/10 bg-white p-5 text-center shadow-card"
-              >
-                <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-navy-soft text-navy ring-2 ring-gold/40">
-                  {teacher.photo_url ? (
-                    <Image
-                      src={teacher.photo_url}
-                      alt={teacher.full_name}
-                      width={80}
-                      height={80}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <Users className="h-8 w-8 text-navy/60" />
+        {/* Tenaga Pendidik (Opsional jika ada) */}
+        {teachers && teachers.length > 0 && (
+          <FadeInUp>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-gold-dark">SDM Pendidik</p>
+              <h2 className="mt-1 text-2xl font-extrabold text-navy-deep">Tenaga Pendidik</h2>
+            </div>
+            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {teachers.map((teacher) => (
+                <div
+                  key={teacher.id}
+                  className="rounded-2xl border border-navy/10 bg-white p-5 text-center shadow-card"
+                >
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-navy-soft text-navy ring-2 ring-gold/40">
+                    {teacher.photo_url ? (
+                      <Image
+                        src={teacher.photo_url}
+                        alt={teacher.full_name}
+                        width={80}
+                        height={80}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <Users className="h-8 w-8 text-navy/60" />
+                    )}
+                  </div>
+                  <h3 className="mt-4 text-sm font-extrabold text-navy-deep">{teacher.full_name}</h3>
+                  <p className="mt-0.5 text-xs font-semibold text-gold-dark">{teacher.position}</p>
+                  {teacher.subject_or_specialty && (
+                    <p className="mt-1 text-xs text-slate-500">{teacher.subject_or_specialty}</p>
                   )}
                 </div>
-                <h3 className="mt-4 text-sm font-extrabold text-navy-deep">{teacher.full_name}</h3>
-                <p className="mt-0.5 text-xs font-semibold text-gold-dark">{teacher.position}</p>
-                {teacher.subject_or_specialty && (
-                  <p className="mt-1 text-xs text-slate-500">{teacher.subject_or_specialty}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </FadeInUp>
+              ))}
+            </div>
+          </FadeInUp>
+        )}
 
         {/* Berita, Galeri & Agenda Unit */}
         <FadeInUp>

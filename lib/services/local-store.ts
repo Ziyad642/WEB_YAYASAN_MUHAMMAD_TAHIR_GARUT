@@ -313,6 +313,17 @@ export function deleteLocalAdmission(id: string): boolean {
   return true;
 }
 
+export function deleteLocalAdmissionsBatch(
+  predicate: (a: AdmissionRecord) => boolean
+): number {
+  const all = getLocalAdmissions();
+  const toDelete = all.filter(predicate);
+  if (toDelete.length === 0) return 0;
+  const remaining = all.filter((a) => !predicate(a));
+  saveLocalAdmissions(remaining);
+  return toDelete.length;
+}
+
 export function createLocalAdmission(
   newAdmission: Omit<AdmissionRecord, 'id' | 'registration_number'> & {
     unitCode: UnitCode;

@@ -35,15 +35,22 @@ export async function POST(request: NextRequest) {
 
     const ext = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
     const fileName = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', folder);
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
     const buffer = Buffer.from(await file.arrayBuffer());
-    fs.writeFileSync(path.join(uploadDir, fileName), buffer);
 
-    const publicUrl = `/uploads/${folder}/${fileName}`;
-    return NextResponse.json({ success: true, publicUrl, path: `${folder}/${fileName}` });
+    try {
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', folder);
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
+      const publicUrl = `/uploads/${folder}/${fileName}`;
+      return NextResponse.json({ success: true, publicUrl, path: `${folder}/${fileName}` });
+    } catch {
+      // Fallback for read-only serverless environment (Vercel Lambda): return base64 Data URI
+      const base64Data = buffer.toString('base64');
+      const publicUrl = `data:${file.type};base64,${base64Data}`;
+      return NextResponse.json({ success: true, publicUrl, path: `inline/${fileName}` });
+    }
   }
 
   const formData = await request.formData();

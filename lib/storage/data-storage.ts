@@ -8,16 +8,21 @@ let cachedStorageDir: string | null = null;
  * Mendapatkan direktori penyimpanan yang aman dan writable.
  * Di lingkungan serverless Vercel / AWS Lambda, root direktori adalah read-only (/var/task).
  * Oleh karena itu, direktori dialihkan ke os.tmpdir() (/tmp/yayasan_data).
- * Di lokal (development), menggunakan direktori project /data.
+ * Di lokal (development), menggunakan direktori project /data jika writable.
  */
 export function getStorageDirectory(): string {
   if (cachedStorageDir) return cachedStorageDir;
 
-  const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
-  const localProjectDataDir = path.join(process.cwd(), 'data');
+  const isServerless = Boolean(
+    process.env.VERCEL ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    process.env.NODE_ENV === 'production' ||
+    process.cwd().startsWith('/var/task')
+  );
 
-  if (isVercel) {
-    const tmpDataDir = path.join(os.tmpdir(), 'yayasan_data');
+  const tmpDataDir = path.join(os.tmpdir(), 'yayasan_data');
+
+  if (isServerless) {
     if (!fs.existsSync(tmpDataDir)) {
       try {
         fs.mkdirSync(tmpDataDir, { recursive: true });
@@ -28,6 +33,8 @@ export function getStorageDirectory(): string {
     cachedStorageDir = tmpDataDir;
     return cachedStorageDir;
   }
+
+  const localProjectDataDir = path.join(process.cwd(), 'data');
 
   // Cek apakah direktori lokal writable
   try {
@@ -41,9 +48,12 @@ export function getStorageDirectory(): string {
     return cachedStorageDir;
   } catch {
     // Jika lokal ternyata read-only, fallback ke tmp
-    const tmpDataDir = path.join(os.tmpdir(), 'yayasan_data');
     if (!fs.existsSync(tmpDataDir)) {
-      fs.mkdirSync(tmpDataDir, { recursive: true });
+      try {
+        fs.mkdirSync(tmpDataDir, { recursive: true });
+      } catch (err) {
+        console.warn('[Storage] Gagal membuat direktori tmp, fallback:', err);
+      }
     }
     cachedStorageDir = tmpDataDir;
     return cachedStorageDir;
@@ -80,18 +90,28 @@ export function resolveDataFilePath(fileName: string): string {
  */
 export function readDataJson<T>(fileName: string, fallback: T): T {
   try {
-    const filePath = resolveDataFilePath(fileName);
-    if (!fs.existsSync(filePath)) {
-      // Coba cek seed path langsung jika belum ada di target
-      const seedFilePath = path.join(process.cwd(), 'data', fileName);
-      if (fs.existsSync(seedFilePath)) {
-        const seedContent = fs.readFileSync(seedFilePath, 'utf8');
-        return JSON.parse(seedContent) as T;
-      }
-      return fallback;
+    // 1. Cek direktori tmp terlebih dahulu jika data sudah diperbarui
+    const tmpFilePath = path.join(os.tmpdir(), 'yayasan_data', fileName);
+    if (fs.existsSync(tmpFilePath)) {
+      const content = fs.readFileSync(tmpFilePath, 'utf8');
+      return JSON.parse(content) as T;
     }
-    const content = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(content) as T;
+
+    // 2. Cek resolved target file
+    const filePath = resolveDataFilePath(fileName);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(content) as T;
+    }
+
+    // 3. Fallback ke seed di project /data
+    const seedFilePath = path.join(process.cwd(), 'data', fileName);
+    if (fs.existsSync(seedFilePath)) {
+      const seedContent = fs.readFileSync(seedFilePath, 'utf8');
+      return JSON.parse(seedContent) as T;
+    }
+
+    return fallback;
   } catch (err) {
     console.warn(`[Storage] Gagal membaca data JSON ${fileName}:`, err);
     return fallback;
@@ -111,7 +131,19 @@ export function writeDataJson<T>(fileName: string, data: T): boolean {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
     return true;
   } catch (err) {
-    console.error(`[Storage] Gagal menulis data JSON ${fileName}:`, err);
-    return false;
+    try {
+      // Emergency fallback directly to /tmp
+      const fallbackPath = path.join(os.tmpdir(), 'yayasan_data', fileName);
+      const dir = path.dirname(fallbackPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(fallbackPath, JSON.stringify(data, null, 2), 'utf8');
+      cachedStorageDir = path.join(os.tmpdir(), 'yayasan_data');
+      return true;
+    } catch (innerErr) {
+      console.error(`[Storage] Gagal menulis data JSON ${fileName}:`, innerErr);
+      return false;
+    }
   }
 }

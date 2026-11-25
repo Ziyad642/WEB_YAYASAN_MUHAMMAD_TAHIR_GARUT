@@ -130,12 +130,6 @@ export function ApplicantAuthClient() {
     }
   };
 
-  const handleQuickLogin = (demoPhone: string, demoPass: string) => {
-    setIdentifier(demoPhone);
-    setPassword(demoPass);
-    setError('');
-  };
-
   return (
     <div className="mx-auto w-full max-w-lg">
       <div className="overflow-hidden rounded-3xl border border-navy/10 bg-white shadow-xl">
@@ -469,26 +463,6 @@ export function ApplicantAuthClient() {
               </button>
             </form>
           )}
-
-          {/* Akun Contoh Terdaftar */}
-          <div className="mt-6 rounded-2xl border border-navy/10 bg-softgray p-4 text-xs">
-            <p className="font-bold text-navy-deep">💡 Contoh Akun Wali Santri Terdaftar:</p>
-            <p className="mt-1 text-slate-500">
-              Orang tua pendaftar Aisyah Azzahra (RA):
-            </p>
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-navy/10 bg-white p-2.5 font-mono text-[11px]">
-              <div>
-                <span>WA: <strong>081234567891</strong></span> • <span>Sandi: <strong>WaliSantri2027!</strong></span>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('081234567891', 'WaliSantri2027!')}
-                className="rounded-lg bg-navy/10 px-2 py-0.5 text-navy hover:bg-navy hover:text-white transition-colors"
-              >
-                Gunakan
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

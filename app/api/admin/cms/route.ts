@@ -182,6 +182,17 @@ export async function POST(request: NextRequest) {
           revalidatePath('/admin/dashboard');
           return NextResponse.json({ success: true, id: newItem.id });
         }
+        if (action === 'update' && id) {
+          const index = currentEvents.findIndex((e) => e.id === id);
+          if (index !== -1) {
+            currentEvents[index] = { ...currentEvents[index], ...parsed.data };
+            saveStoredEvents(currentEvents);
+          }
+          revalidatePath('/');
+          revalidatePath('/agenda');
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({ success: true });
+        }
       }
 
       // 5. Galeri Foto
@@ -212,6 +223,17 @@ export async function POST(request: NextRequest) {
           revalidatePath('/galeri');
           revalidatePath('/admin/dashboard');
           return NextResponse.json({ success: true, id: newItem.id });
+        }
+        if (action === 'update' && id) {
+          const index = currentGalleries.findIndex((g) => g.id === id);
+          if (index !== -1) {
+            currentGalleries[index] = { ...currentGalleries[index], ...parsed.data } as any;
+            saveStoredGalleries(currentGalleries);
+          }
+          revalidatePath('/');
+          revalidatePath('/galeri');
+          revalidatePath('/admin/dashboard');
+          return NextResponse.json({ success: true });
         }
       }
 
@@ -565,6 +587,13 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json({ success: true, id: created.id });
       }
+
+      if (action === 'update' && id) {
+        const { items, ...albumData } = parsed.data;
+        const { error } = await admin.from('galleries').update(albumData).eq('id', id);
+        if (error) throw new Error(error.message);
+        return NextResponse.json({ success: true });
+      }
     }
 
     // 5. Agenda Kegiatan
@@ -587,6 +616,11 @@ export async function POST(request: NextRequest) {
       }
       if (action === 'create') {
         const { error } = await admin.from('events').insert({ ...parsed.data, created_by: profile.id });
+        if (error) throw new Error(error.message);
+        return NextResponse.json({ success: true });
+      }
+      if (action === 'update' && id) {
+        const { error } = await admin.from('events').update(parsed.data).eq('id', id);
         if (error) throw new Error(error.message);
         return NextResponse.json({ success: true });
       }

@@ -1,21 +1,15 @@
 'use client';
 
 import {
-  Activity,
   Building2,
-  Calendar,
   ChevronLeft,
   ChevronRight,
-  FileSpreadsheet,
   GraduationCap,
-  Image as ImageIcon,
   LayoutDashboard,
   LogOut,
   Menu,
   Newspaper,
   School,
-  Settings,
-  UserCheck,
   Users,
   X,
 } from 'lucide-react';
@@ -27,22 +21,16 @@ import { CmsManagementPanel } from '@/components/dashboard/CmsManagementPanel';
 import { PpdbManagementPanel } from '@/components/dashboard/PpdbManagementPanel';
 import type { AdminDashboardPayload } from '@/lib/data/admin-repository';
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
-import { cn } from '@/lib/utils';
+import { cn, formatDateId } from '@/lib/utils';
 import type { AuthSessionProfile } from '@/types/database';
 
-type TabKey =
+export type TabKey =
   | 'overview'
-  | 'admissions'
-  | 'google-sync'
   | 'foundation'
   | 'units'
-  | 'news'
-  | 'galleries'
-  | 'events'
-  | 'teachers'
-  | 'periods'
-  | 'users'
-  | 'audit';
+  | 'information'
+  | 'admissions'
+  | 'users';
 
 interface AdminDashboardShellProps {
   profile: AuthSessionProfile;
@@ -50,57 +38,53 @@ interface AdminDashboardShellProps {
   initialTab?: TabKey;
 }
 
-export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: AdminDashboardShellProps) {
+export function AdminDashboardShell({
+  profile,
+  data,
+  initialTab = 'overview',
+}: AdminDashboardShellProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const isSuperAdmin = profile.role === 'super_admin';
-  const canManageCms = profile.role === 'super_admin' || profile.role === 'admin_unit';
 
+  // Sesuai Master Prompt:
+  // - Dashboard Kepala Sekolah HANYA 4 MENU: Ringkasan, Profil Sekolah, Informasi & Kegiatan, PPDB.
+  // - Dashboard Ketua Yayasan HANYA 5 MENU: Ringkasan, Profil Yayasan, Informasi & Kegiatan, PPDB, Pengguna.
   const navItems = useMemo(() => {
-    const items: Array<{ key: TabKey; label: string; icon: typeof LayoutDashboard }> = [
-      { key: 'overview', label: 'Ringkasan', icon: LayoutDashboard },
-      { key: 'admissions', label: 'Data Pendaftar PPDB', icon: GraduationCap },
-      { key: 'google-sync', label: 'Sinkron Google Sheets', icon: FileSpreadsheet },
-    ];
-
-    if (canManageCms) {
-      if (isSuperAdmin) {
-        items.push({ key: 'foundation', label: 'Profil Yayasan', icon: Building2 });
-      }
-      items.push(
-        {
-          key: 'units',
-          label: isSuperAdmin ? 'Profil Unit Sekolah' : 'Profil Sekolah & Logo',
-          icon: School,
-        },
-        { key: 'news', label: 'Berita & Pengumuman', icon: Newspaper },
-        { key: 'galleries', label: 'Galeri Foto', icon: ImageIcon },
-        { key: 'events', label: 'Agenda Kegiatan', icon: Calendar },
-        { key: 'teachers', label: 'Tenaga Pendidik', icon: UserCheck },
-        { key: 'periods', label: 'Gelombang PPDB', icon: Settings }
-      );
-    }
-
     if (isSuperAdmin) {
-      items.push(
-        { key: 'users', label: 'Pengguna Admin', icon: Users },
-        { key: 'audit', label: 'Audit Aktivitas', icon: Activity }
-      );
+      return [
+        { key: 'overview' as const, label: 'Ringkasan', icon: LayoutDashboard },
+        { key: 'foundation' as const, label: 'Profil Yayasan', icon: Building2 },
+        { key: 'information' as const, label: 'Informasi & Kegiatan', icon: Newspaper },
+        { key: 'admissions' as const, label: 'PPDB', icon: GraduationCap },
+        { key: 'users' as const, label: 'Pengguna', icon: Users },
+      ];
     }
 
-    return items;
-  }, [canManageCms, isSuperAdmin]);
+    // Kepala Sekolah
+    return [
+      { key: 'overview' as const, label: 'Ringkasan', icon: LayoutDashboard },
+      { key: 'units' as const, label: 'Profil Sekolah', icon: School },
+      { key: 'information' as const, label: 'Informasi & Kegiatan', icon: Newspaper },
+      { key: 'admissions' as const, label: 'PPDB', icon: GraduationCap },
+    ];
+  }, [isSuperAdmin]);
 
+  // Statistik aktual dari database
   const stats = useMemo(() => {
     const total = data.admissions.length;
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const newApplicants = data.admissions.filter((a) => {
+      const time = new Date(a.submitted_at).getTime();
+      return !isNaN(time) && time >= sevenDaysAgo;
+    }).length;
     const pending = data.admissions.filter((a) => a.status === 'menunggu_verifikasi').length;
     const accepted = data.admissions.filter((a) => a.status === 'diterima').length;
-    const failedSync = data.syncLogs.filter((l) => l.sync_status === 'failed').length;
-    return { total, pending, accepted, failedSync };
-  }, [data.admissions, data.syncLogs]);
+    return { total, newApplicants, pending, accepted };
+  }, [data.admissions]);
 
   const handleLogout = async () => {
     try {
@@ -124,7 +108,7 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
           <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-white p-0.5">
             <Image
               src="/logos/logo-yayasan.png"
-              alt="Logo"
+              alt="Logo Yayasan"
               fill
               sizes="36px"
               className="object-contain"
@@ -132,33 +116,40 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
           </div>
           {(!sidebarCollapsed || mobile) && (
             <div className="min-w-0">
-              <p className="truncate text-xs font-extrabold text-white">Yayasan MT Garut</p>
-              <p className="truncate text-[10px] font-semibold text-gold">{profile.role_name}</p>
+              <p className="truncate text-xs font-bold text-white">YMT Garut</p>
+              <p className="truncate text-[10px] text-gold-light">
+                {isSuperAdmin ? 'Ketua Yayasan' : 'Kepala Sekolah'}
+              </p>
             </div>
           )}
         </div>
-
-        {!mobile ? (
+        {mobile ? (
           <button
             type="button"
-            onClick={() => setSidebarCollapsed((c) => !c)}
-            aria-label="Ciutkan sidebar"
-            className="hidden lg:inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20"
+            onClick={() => setMobileDrawerOpen(false)}
+            aria-label="Tutup menu"
+            className="rounded-lg p-1 text-slate-300 hover:bg-white/10"
           >
-            {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            <X className="h-5 w-5" />
           </button>
         ) : (
           <button
             type="button"
-            onClick={() => setMobileDrawerOpen(false)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label={sidebarCollapsed ? 'Perlebar sidebar' : 'Ciutkan sidebar'}
+            className="hidden lg:flex rounded-lg p-1 text-slate-300 hover:bg-white/10"
           >
-            <X className="h-4 w-4" />
+            {sidebarCollapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
           </button>
         )}
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+      {/* Navigasi Utama Sederhana */}
+      <nav className="flex-1 space-y-1 p-3 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = activeTab === item.key;
@@ -168,36 +159,41 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
               type="button"
               onClick={() => {
                 setActiveTab(item.key);
-                setMobileDrawerOpen(false);
+                if (mobile) setMobileDrawerOpen(false);
               }}
               className={cn(
-                'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition-all',
+                'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-all',
                 active
-                  ? 'bg-gold text-navy-deep font-extrabold shadow-sm'
-                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  ? 'bg-gold text-navy-deep shadow-md'
+                  : 'text-slate-200 hover:bg-white/10 hover:text-white',
+                sidebarCollapsed && !mobile && 'justify-center px-2'
               )}
+              title={item.label}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className={cn('h-4 w-4 shrink-0', active ? 'text-navy-deep' : 'text-gold')} />
               {(!sidebarCollapsed || mobile) && <span className="truncate">{item.label}</span>}
             </button>
           );
         })}
       </nav>
 
+      {/* Profil Akun Pengelola & Logout */}
       <div className="border-t border-white/10 p-3 space-y-2">
         <Link
           href="/"
-          className="flex w-full items-center justify-center rounded-xl border border-white/15 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10"
+          target="_blank"
+          className="flex w-full items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-xs font-medium text-slate-200 hover:bg-white/10"
         >
-          {!sidebarCollapsed || mobile ? 'Lihat Website Publik' : 'Web'}
+          <span className="truncate">Lihat Website Publik</span>
+          <span className="ml-auto text-[10px] text-gold">↗</span>
         </Link>
         <button
           type="button"
           onClick={handleLogout}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-500/20 px-3 py-2 text-xs font-bold text-rose-200 hover:bg-rose-500/30"
+          className="flex w-full items-center gap-2 rounded-xl bg-rose-500/20 px-3 py-2 text-xs font-bold text-rose-200 hover:bg-rose-500/30 transition-all"
         >
-          <LogOut className="h-4 w-4 shrink-0" />
-          {(!sidebarCollapsed || mobile) && <span>Keluar</span>}
+          <LogOut className="h-4 w-4 shrink-0 text-rose-300" />
+          {(!sidebarCollapsed || mobile) && <span>Keluar Sistem</span>}
         </button>
       </div>
     </div>
@@ -208,13 +204,11 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          'hidden lg:block shrink-0 transition-all duration-200',
+          'hidden lg:flex flex-col shrink-0 transition-all duration-300 border-r border-navy/10',
           sidebarCollapsed ? 'w-20' : 'w-64'
         )}
       >
-        <div className="sticky top-0 h-screen">
-          <SidebarContent />
-        </div>
+        <SidebarContent />
       </aside>
 
       {/* Mobile Drawer */}
@@ -229,7 +223,7 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
         </div>
       )}
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="flex-1 min-w-0">
         <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-navy/10 bg-white px-4 py-3.5 sm:px-6">
           <div className="flex items-center gap-3 min-w-0">
@@ -255,33 +249,39 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
         </header>
 
         <main className="mx-auto max-w-7xl p-4 sm:p-6 space-y-6">
+          {/* 1. RINGKASAN */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
+              {/* 4 Kartu Statistik Utama Aktual */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">
-                  <p className="text-xs font-bold uppercase text-slate-400">Total Pendaftar PPDB</p>
+                  <p className="text-xs font-bold uppercase text-slate-400">Total Pendaftar</p>
                   <p className="mt-2 text-3xl font-extrabold text-navy-deep">{stats.total}</p>
+                  <p className="mt-1 text-[11px] text-slate-500">Data pendaftaran tersimpan</p>
+                </div>
+                <div className="rounded-2xl border border-blue-200 bg-blue-50/60 p-5">
+                  <p className="text-xs font-bold uppercase text-blue-700">Pendaftar Baru</p>
+                  <p className="mt-2 text-3xl font-extrabold text-blue-900">{stats.newApplicants}</p>
+                  <p className="mt-1 text-[11px] text-blue-700/80">Pendaftar 7 hari terakhir</p>
                 </div>
                 <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
                   <p className="text-xs font-bold uppercase text-amber-700">Menunggu Verifikasi</p>
                   <p className="mt-2 text-3xl font-extrabold text-amber-900">{stats.pending}</p>
+                  <p className="mt-1 text-[11px] text-amber-800/80">Memerlukan pengecekan berkas</p>
                 </div>
                 <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-                  <p className="text-xs font-bold uppercase text-emerald-700">Siswa Diterima</p>
+                  <p className="text-xs font-bold uppercase text-emerald-700">Pendaftar Diterima</p>
                   <p className="mt-2 text-3xl font-extrabold text-emerald-900">{stats.accepted}</p>
-                </div>
-                <div className="rounded-2xl border border-navy/10 bg-white p-5 shadow-sm">
-                  <p className="text-xs font-bold uppercase text-slate-400">
-                    Sync Google Sheets Gagal
-                  </p>
-                  <p className="mt-2 text-3xl font-extrabold text-rose-600">{stats.failedSync}</p>
+                  <p className="mt-1 text-[11px] text-emerald-800/80">Telah diverifikasi resmi</p>
                 </div>
               </div>
 
-              {/* Statistik per unit yang boleh diakses */}
+              {/* Ringkasan Unit Pendidikan */}
               <div className="rounded-2xl border border-navy/10 bg-white p-5 sm:p-6">
                 <h2 className="text-base font-extrabold text-navy-deep">
-                  Ringkasan Unit Pendidikan Terkelola
+                  {isSuperAdmin
+                    ? 'Ringkasan Pendaftar Seluruh Unit Pendidikan'
+                    : 'Pendaftar Unit Pendidikan Anda'}
                 </h2>
                 <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                   {data.units.map((u) => {
@@ -289,18 +289,20 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
                     return (
                       <div key={u.id} className="rounded-2xl bg-softgray p-4">
                         <div className="flex items-center gap-3">
-                          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white p-1">
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white p-1 ring-1 ring-navy/10">
                             <Image
                               src={u.logo_url}
                               alt={u.name}
                               fill
-                              sizes="40px"
+                              sizes="48px"
                               className="object-contain"
                             />
                           </div>
                           <div>
                             <p className="text-sm font-extrabold text-navy-deep">{u.name}</p>
-                            <p className="text-xs text-slate-500">{count} pendaftar tercatat</p>
+                            <p className="text-xs font-bold text-gold-dark mt-0.5">
+                              {count} pendaftar tercatat
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -308,29 +310,75 @@ export function AdminDashboardShell({ profile, data, initialTab = 'overview' }: 
                   })}
                 </div>
               </div>
+
+              {/* Informasi & Kegiatan Terbaru */}
+              <div className="rounded-2xl border border-navy/10 bg-white p-5 sm:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-extrabold text-navy-deep">
+                    Informasi & Kegiatan Terbaru
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('information')}
+                    className="text-xs font-bold text-navy hover:text-gold-dark"
+                  >
+                    Kelola Semua →
+                  </button>
+                </div>
+                {data.news.length === 0 ? (
+                  <p className="text-xs text-slate-500 py-4 text-center">
+                    Belum ada informasi yang dipublikasikan.
+                  </p>
+                ) : (
+                  <div className="divide-y divide-navy/10">
+                    {data.news.slice(0, 5).map((item) => (
+                      <div key={item.id} className="py-3 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-navy-deep truncate">{item.title}</p>
+                          <p className="text-[11px] text-slate-500">
+                            {item.unit ? item.unit.name : 'Yayasan Pusat'} •{' '}
+                            {formatDateId(item.published_at)}
+                          </p>
+                        </div>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            item.status === 'published'
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {item.status === 'published' ? 'Terbit' : 'Draft'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {(activeTab === 'admissions' || activeTab === 'google-sync') && (
+          {/* 2. PPDB ONLINE & PENGHAPUSAN DATA */}
+          {activeTab === 'admissions' && (
             <PpdbManagementPanel
-              mode={activeTab}
               admissions={data.admissions}
               syncLogs={data.syncLogs}
               canVerify={true}
               onRefresh={handleRefresh}
+              isSuperAdmin={isSuperAdmin}
+              units={data.units}
+              admissionPeriods={data.admissionPeriods}
             />
           )}
 
-          {activeTab !== 'overview' &&
-            activeTab !== 'admissions' &&
-            activeTab !== 'google-sync' && (
-              <CmsManagementPanel
-                section={activeTab}
-                profile={profile}
-                data={data}
-                onRefresh={handleRefresh}
-              />
-            )}
+          {/* 3. PROFIL YAYASAN, PROFIL SEKOLAH, INFORMASI & KEGIATAN, PENGGUNA */}
+          {activeTab !== 'overview' && activeTab !== 'admissions' && (
+            <CmsManagementPanel
+              section={activeTab}
+              profile={profile}
+              data={data}
+              onRefresh={handleRefresh}
+            />
+          )}
         </main>
       </div>
     </div>

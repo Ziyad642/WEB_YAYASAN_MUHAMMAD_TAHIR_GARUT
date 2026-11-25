@@ -12,6 +12,7 @@ import {
   DEFAULT_UNIT_PROGRAMS,
 } from '@/lib/data/default-content';
 import {
+  getStoredAdmissionPeriods,
   getStoredEducationUnits,
   getStoredEvents,
   getStoredFoundationSettings,
@@ -296,11 +297,13 @@ export async function getPpdbOptions(): Promise<{
   periods: AdmissionPeriod[];
 }> {
   const units = await getEducationUnits();
+  const storedPeriods = getStoredAdmissionPeriods();
+
   if (!isSupabaseServerConfigured()) {
     return {
       units,
       academicYears: DEFAULT_ACADEMIC_YEARS,
-      periods: DEFAULT_ADMISSION_PERIODS,
+      periods: storedPeriods,
     };
   }
   try {
@@ -310,7 +313,6 @@ export async function getPpdbOptions(): Promise<{
       supabase
         .from('admission_periods')
         .select('*, academic_year:academic_years(*)')
-        .eq('is_open', true)
         .order('start_date', { ascending: true }),
     ]);
 
@@ -323,13 +325,13 @@ export async function getPpdbOptions(): Promise<{
       periods:
         periodsRes.data && periodsRes.data.length > 0
           ? (periodsRes.data as AdmissionPeriod[])
-          : DEFAULT_ADMISSION_PERIODS,
+          : storedPeriods,
     };
   } catch {
     return {
       units,
       academicYears: DEFAULT_ACADEMIC_YEARS,
-      periods: DEFAULT_ADMISSION_PERIODS,
+      periods: storedPeriods,
     };
   }
 }
